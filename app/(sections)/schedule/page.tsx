@@ -24,10 +24,10 @@ export default function SchedulePage() {
         </motion.div>
 
         {/* Weekly Split */}
-        <motion.div variants={item} className="rounded-xl p-4 bg-[var(--cyber-card)] border border-[var(--cyber-accent)]/20">
-          <div className="text-[10px] text-[var(--cyber-accent)] tracking-[3px] mb-3 uppercase">WEEKLY SPLIT</div>
+        <motion.div variants={item} className="rounded-xl p-4 card-dark border border-[var(--theme-orange)]/20">
+          <div className="text-[10px] text-[var(--theme-orange)] tracking-[3px] mb-3 uppercase">WEEKLY SPLIT</div>
           {WEEK_SCHEDULE.map((d, i) => (
-            <div key={i} className="flex items-center gap-3 py-2.5" style={{ borderBottom: i < 6 ? "1px solid var(--cyber-border)" : "none" }}>
+            <div key={i} className="flex items-center gap-3 py-2.5" style={{ borderBottom: i < 6 ? "1px solid var(--theme-border)" : "none" }}>
               <div className="px-2 py-1 rounded-md text-[11px] font-bold text-center min-w-[40px]" style={{ backgroundColor: d.color + "20", color: d.color }}>{d.day}</div>
               <div className="text-[12px] text-[var(--foreground)] flex-1">{d.label}</div>
               <div className="text-[9px] text-[var(--muted-foreground)] uppercase tracking-wider">{d.type}</div>
@@ -37,36 +37,36 @@ export default function SchedulePage() {
 
         {/* Progression Phases */}
         <motion.div variants={item}>
-          <div className="font-display text-lg text-[var(--cyber-gold)] tracking-wider mb-2">10-WEEK PROGRESSION PHASES</div>
+          <div className="font-display text-lg text-[var(--theme-accent-dark)] tracking-wider mb-2">10-WEEK PROGRESSION PHASES</div>
         </motion.div>
 
         {TRACKING_DATA.progression.map((p, i) => (
-          <motion.div key={i} variants={item} className="rounded-xl p-4 bg-[var(--cyber-card)] border border-[var(--cyber-border)]">
+          <motion.div key={i} variants={item} className="rounded-xl p-4 card-dark border border-[var(--theme-border)]">
             <div className="flex items-center justify-between mb-2">
-              <div className="font-display text-base tracking-wider" style={{ color: i + 1 <= currentWeek ? "var(--cyber-accent)" : "var(--muted-foreground)" }}>
+              <div className="font-display text-base tracking-wider" style={{ color: i + 1 <= currentWeek ? "var(--theme-orange)" : "var(--muted-foreground)" }}>
                 {p.phase}: {p.focus.toUpperCase()}
               </div>
               {i + 1 <= Math.ceil(currentWeek / 2) && (
-                <span className="text-[8px] px-2 py-0.5 rounded bg-[var(--cyber-accent)]/20 text-[var(--cyber-accent)]">ACTIVE</span>
+                <span className="text-[8px] px-2 py-0.5 rounded bg-[var(--theme-orange)]/20 text-[var(--theme-orange)]">ACTIVE</span>
               )}
             </div>
             <p className="text-[12px] text-[var(--muted-foreground)] leading-relaxed">{p.desc}</p>
-            <div className="h-1 bg-[var(--cyber-dim)] rounded-full mt-3 overflow-hidden">
-              <div className="h-full bg-[var(--cyber-accent)] rounded-full transition-all duration-700" style={{ width: `${Math.min(100, (currentWeek / 2 / (i + 1)) * 100)}%` }} />
+            <div className="h-1 bg-[var(--theme-dim)] rounded-full mt-3 overflow-hidden">
+              <div className="h-full bg-[var(--theme-orange)] rounded-full transition-all duration-700" style={{ width: `${Math.min(100, (currentWeek / 2 / (i + 1)) * 100)}%` }} />
             </div>
           </motion.div>
         ))}
 
         {/* Week Narratives */}
         <motion.div variants={item}>
-          <div className="font-display text-lg text-[var(--cyber-accent)] tracking-wider mb-2">MISSION BRIEFINGS</div>
+          <div className="font-display text-lg text-[var(--theme-orange)] tracking-wider mb-2">MISSION BRIEFINGS</div>
         </motion.div>
 
         {WEEK_NARRATIVES.map((n) => (
-          <motion.div key={n.week} variants={item} className="rounded-xl p-3 border-l-[3px] bg-[var(--cyber-card)]" style={{ borderColor: n.week <= currentWeek ? "var(--cyber-accent)" : "var(--cyber-dim)", opacity: n.week <= currentWeek ? 1 : 0.4 }}>
+          <motion.div key={n.week} variants={item} className="rounded-xl p-3 border-l-[3px] card-dark" style={{ borderColor: n.week <= currentWeek ? "var(--theme-orange)" : "var(--theme-dim)", opacity: n.week <= currentWeek ? 1 : 0.4 }}>
             <div className="flex items-center gap-2">
-              <span className="text-[9px] font-bold tracking-wider" style={{ color: n.week <= currentWeek ? "var(--cyber-accent)" : "var(--muted-foreground)" }}>WEEK {n.week}</span>
-              <span className="font-display text-sm" style={{ color: n.week === currentWeek ? "var(--cyber-accent)" : "var(--foreground)" }}>{n.title}</span>
+              <span className="text-[9px] font-bold tracking-wider" style={{ color: n.week <= currentWeek ? "var(--theme-orange)" : "var(--muted-foreground)" }}>WEEK {n.week}</span>
+              <span className="font-display text-sm" style={{ color: n.week === currentWeek ? "var(--theme-orange)" : "var(--foreground)" }}>{n.title}</span>
             </div>
             <p className="text-[10px] text-[var(--muted-foreground)] mt-1">{n.text}</p>
           </motion.div>

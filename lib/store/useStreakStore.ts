@@ -1,8 +1,9 @@
 "use client";
 
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
 import type { CheckIn, CheckInStatus } from "@/types/tracking";
+import { auth, db } from "@/lib/firebase";
+import { doc, setDoc } from "firebase/firestore";
 
 interface StreakState {
   checkins: CheckIn[];
@@ -14,7 +15,16 @@ interface StreakState {
   getCheckin: (date: string) => CheckIn | undefined;
   getWeeklyCount: () => number;
   recalculateStreak: () => void;
+  loadData: (data: Partial<StreakState>) => void;
+  reset: () => void;
 }
+
+const syncToFirebase = (state: any) => {
+  const uid = auth.currentUser?.uid;
+  if (uid) {
+    setDoc(doc(db, "users", uid, "streak", "state"), state, { merge: true });
+  }
+};
 
 function calculateStreak(checkins: CheckIn[]): number {
   if (checkins.length === 0) return 0;
@@ -50,52 +60,63 @@ function calculateStreak(checkins: CheckIn[]): number {
   return streak;
 }
 
-export const useStreakStore = create<StreakState>()(
-  persist(
-    (set, get) => ({
+export const useStreakStore = create<StreakState>()((set, get) => ({
+  checkins: [],
+  currentStreak: 0,
+  longestStreak: 0,
+
+  addCheckin: (date, status, workoutType) => {
+    const existing = get().checkins;
+    const filtered = existing.filter((c) => c.date !== date);
+    const updated = [...filtered, { date, status, workoutType }];
+    const streak = calculateStreak(updated);
+    const longest = Math.max(streak, get().longestStreak);
+
+    const newState = {
+      checkins: updated,
+      currentStreak: streak,
+      longestStreak: longest,
+    };
+    
+    set(newState);
+    syncToFirebase(newState);
+  },
+
+  getCheckin: (date) => {
+    return get().checkins.find((c) => c.date === date);
+  },
+
+  getWeeklyCount: () => {
+    const now = new Date();
+    const dayOfWeek = now.getDay();
+    const monday = new Date(now);
+    monday.setDate(now.getDate() - ((dayOfWeek + 6) % 7));
+    monday.setHours(0, 0, 0, 0);
+
+    return get().checkins.filter((c) => {
+      const d = new Date(c.date);
+      return d >= monday && c.status === "complete";
+    }).length;
+  },
+
+  recalculateStreak: () => {
+    const streak = calculateStreak(get().checkins);
+    const longest = Math.max(streak, get().longestStreak);
+    
+    const newState = { currentStreak: streak, longestStreak: longest };
+    set(newState);
+    syncToFirebase(newState);
+  },
+  
+  loadData: (data: Partial<StreakState>) => {
+    set({ ...data });
+  },
+
+  reset: () => {
+    set({
       checkins: [],
       currentStreak: 0,
       longestStreak: 0,
-
-      addCheckin: (date, status, workoutType) => {
-        const existing = get().checkins;
-        const filtered = existing.filter((c) => c.date !== date);
-        const updated = [...filtered, { date, status, workoutType }];
-        const streak = calculateStreak(updated);
-        const longest = Math.max(streak, get().longestStreak);
-
-        set({
-          checkins: updated,
-          currentStreak: streak,
-          longestStreak: longest,
-        });
-      },
-
-      getCheckin: (date) => {
-        return get().checkins.find((c) => c.date === date);
-      },
-
-      getWeeklyCount: () => {
-        const now = new Date();
-        const dayOfWeek = now.getDay();
-        const monday = new Date(now);
-        monday.setDate(now.getDate() - ((dayOfWeek + 6) % 7));
-        monday.setHours(0, 0, 0, 0);
-
-        return get().checkins.filter((c) => {
-          const d = new Date(c.date);
-          return d >= monday && c.status === "complete";
-        }).length;
-      },
-
-      recalculateStreak: () => {
-        const streak = calculateStreak(get().checkins);
-        const longest = Math.max(streak, get().longestStreak);
-        set({ currentStreak: streak, longestStreak: longest });
-      },
-    }),
-    {
-      name: "fitness-streak-store",
-    }
-  )
-);
+    });
+  },
+}));

@@ -1,18 +1,11 @@
 import type { Metadata, Viewport } from "next";
-import { Bebas_Neue, Space_Mono } from "next/font/google";
+import { Inter } from "next/font/google";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { AuthProvider } from "@/components/auth/AuthProvider";
 import "./globals.css";
 
-const bebasNeue = Bebas_Neue({
-  weight: "400",
-  variable: "--font-bebas",
-  subsets: ["latin"],
-  display: "swap",
-});
-
-const spaceMono = Space_Mono({
-  weight: ["400", "700"],
-  variable: "--font-space-mono",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
   display: "swap",
 });
@@ -34,7 +27,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
-  themeColor: "#080B0F",
+  themeColor: "#121416",
 };
 
 export default function RootLayout({
@@ -45,10 +38,12 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${bebasNeue.variable} ${spaceMono.variable} dark h-full`}
+      className={`${inter.variable} dark h-full`}
     >
-      <body className="min-h-full flex flex-col bg-[#080B0F] text-[#E8EDF5] font-mono antialiased">
-        <TooltipProvider>{children}</TooltipProvider>
+      <body className="min-h-full flex flex-col bg-[#121416] text-[#F0F1F3] antialiased" style={{ fontFamily: "'SF Pro Display', var(--font-inter), -apple-system, BlinkMacSystemFont, 'Inter', sans-serif" }}>
+        <AuthProvider>
+          <TooltipProvider>{children}</TooltipProvider>
+        </AuthProvider>
       </body>
     </html>
   );

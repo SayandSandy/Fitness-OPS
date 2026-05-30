@@ -41,7 +41,7 @@ export default function JournalPage() {
   const [noteSaved, setNoteSaved] = useState(false);
 
   const recoveryColor =
-    recoveryScore >= 80 ? "var(--cyber-accent)" : recoveryScore >= 60 ? "var(--cyber-gold)" : "var(--cyber-red)";
+    recoveryScore >= 80 ? "var(--theme-orange)" : recoveryScore >= 60 ? "var(--theme-accent-dark)" : "var(--theme-red)";
   const recoveryText =
     recoveryScore >= 80 ? "Push hard" : recoveryScore >= 60 ? "Moderate effort" : "Take it easy";
 
@@ -66,8 +66,8 @@ export default function JournalPage() {
         <motion.div variants={item} className="flex justify-center">
           <div className="relative w-32 h-32">
             <svg className="w-full h-full -rotate-90" viewBox="0 0 120 120">
-              <circle cx="60" cy="60" r="52" fill="none" stroke="var(--cyber-dim)" strokeWidth="6" />
-              <circle cx="60" cy="60" r="52" fill="none" stroke={recoveryColor} strokeWidth="6" strokeLinecap="round"
+              <circle cx="60" cy="60" r="52" fill="none" stroke="var(--theme-dim)" strokeWidth="8" />
+              <circle cx="60" cy="60" r="52" fill="none" stroke={recoveryColor} strokeWidth="8" strokeLinecap="round"
                 strokeDasharray={`${(recoveryScore / 100) * 327} ${327 - (recoveryScore / 100) * 327}`}
                 style={{ transition: "all 0.8s ease-out" }} />
             </svg>
@@ -82,15 +82,15 @@ export default function JournalPage() {
         </motion.div>
 
         {/* Mood */}
-        <motion.div variants={item} className="rounded-xl p-4 bg-[var(--cyber-card)] border border-[var(--cyber-border)]">
+        <motion.div variants={item} className="rounded-xl p-4 card-dark">
           <div className="text-[9px] tracking-[3px] text-[var(--muted-foreground)] uppercase mb-3">HOW DO YOU FEEL?</div>
           <div className="flex justify-around">
             {MOODS.map((m) => (
               <button key={m} onClick={() => setMood(today, m)}
                 className="text-2xl p-2 rounded-lg transition-all"
                 style={{
-                  backgroundColor: entry?.mood === m ? "var(--cyber-accent)" + "20" : "transparent",
-                  border: entry?.mood === m ? "1px solid var(--cyber-accent)" : "1px solid transparent",
+                  backgroundColor: entry?.mood === m ? "var(--theme-orange)" + "20" : "transparent",
+                  border: entry?.mood === m ? "1px solid var(--theme-orange)" : "1px solid transparent",
                   transform: entry?.mood === m ? "scale(1.15)" : "scale(1)",
                 }}>
                 {m}
@@ -100,16 +100,16 @@ export default function JournalPage() {
         </motion.div>
 
         {/* Energy */}
-        <motion.div variants={item} className="rounded-xl p-4 bg-[var(--cyber-card)] border border-[var(--cyber-border)]">
+        <motion.div variants={item} className="rounded-xl p-4 card-dark">
           <div className="text-[9px] tracking-[3px] text-[var(--muted-foreground)] uppercase mb-3">ENERGY LEVEL</div>
           <div className="grid grid-cols-3 gap-2">
             {ENERGIES.map((e) => (
               <button key={e.value} onClick={() => setEnergy(today, e.value)}
                 className="py-2.5 rounded-lg text-[11px] font-bold transition-all border"
                 style={{
-                  backgroundColor: entry?.energy === e.value ? "var(--cyber-accent)" + "15" : "var(--cyber-dim)",
-                  borderColor: entry?.energy === e.value ? "var(--cyber-accent)" + "60" : "transparent",
-                  color: entry?.energy === e.value ? "var(--cyber-accent)" : "var(--muted-foreground)",
+                  backgroundColor: entry?.energy === e.value ? "var(--theme-orange)" + "15" : "var(--theme-dim)",
+                  borderColor: entry?.energy === e.value ? "var(--theme-orange)" + "60" : "transparent",
+                  color: entry?.energy === e.value ? "var(--theme-orange)" : "var(--muted-foreground)",
                 }}>
                 {e.icon} {e.label}
               </button>
@@ -118,16 +118,16 @@ export default function JournalPage() {
         </motion.div>
 
         {/* Soreness */}
-        <motion.div variants={item} className="rounded-xl p-4 bg-[var(--cyber-card)] border border-[var(--cyber-border)]">
+        <motion.div variants={item} className="rounded-xl p-4 card-dark">
           <div className="text-[9px] tracking-[3px] text-[var(--muted-foreground)] uppercase mb-3">MUSCLE SORENESS</div>
           <div className="grid grid-cols-3 gap-2">
             {SORENESS_OPTS.map((s) => (
               <button key={s.value} onClick={() => setSoreness(today, s.value)}
                 className="py-2.5 rounded-lg text-[11px] font-bold transition-all border"
                 style={{
-                  backgroundColor: entry?.soreness === s.value ? "var(--cyber-accent)" + "15" : "var(--cyber-dim)",
-                  borderColor: entry?.soreness === s.value ? "var(--cyber-accent)" + "60" : "transparent",
-                  color: entry?.soreness === s.value ? "var(--cyber-accent)" : "var(--muted-foreground)",
+                  backgroundColor: entry?.soreness === s.value ? "var(--theme-orange)" + "15" : "var(--theme-dim)",
+                  borderColor: entry?.soreness === s.value ? "var(--theme-orange)" + "60" : "transparent",
+                  color: entry?.soreness === s.value ? "var(--theme-orange)" : "var(--muted-foreground)",
                 }}>
                 {s.label}
               </button>
@@ -136,7 +136,7 @@ export default function JournalPage() {
         </motion.div>
 
         {/* Sleep Quality */}
-        <motion.div variants={item} className="rounded-xl p-4 bg-[var(--cyber-card)] border border-[var(--cyber-border)]">
+        <motion.div variants={item} className="rounded-xl p-4 card-dark">
           <div className="text-[9px] tracking-[3px] text-[var(--muted-foreground)] uppercase mb-3">SLEEP QUALITY</div>
           <div className="flex justify-around">
             {[1, 2, 3, 4, 5].map((q) => (
@@ -150,31 +150,31 @@ export default function JournalPage() {
         </motion.div>
 
         {/* Notes */}
-        <motion.div variants={item} className="rounded-xl p-4 bg-[var(--cyber-card)] border border-[var(--cyber-border)]">
+        <motion.div variants={item} className="rounded-xl p-4 card-dark">
           <div className="text-[9px] tracking-[3px] text-[var(--muted-foreground)] uppercase mb-3">DAILY NOTES</div>
           <textarea
-            className="w-full bg-[var(--cyber-dim)] rounded-lg p-3 text-[12px] text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] border-none outline-none resize-none min-h-[80px]"
+            className="w-full bg-[var(--theme-dim)] rounded-lg p-3 text-[12px] text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] border-none outline-none resize-none min-h-[80px]"
             placeholder="How was today? Energy, workout feel, observations..."
             defaultValue={entry?.notes || ""}
             onBlur={(e) => handleNoteSave(e.target.value)}
           />
-          {noteSaved && <div className="text-[9px] text-[var(--cyber-accent)] mt-1">✓ Saved (+{XP_AWARDS.journal_entry} XP)</div>}
+          {noteSaved && <div className="text-[9px] text-[var(--theme-orange)] mt-1">✓ Saved (+{XP_AWARDS.journal_entry} XP)</div>}
         </motion.div>
 
         {/* Sunday Weekly Reflection */}
         {isSunday && (
-          <motion.div variants={item} className="rounded-xl p-4 bg-[var(--cyber-card)] border border-[var(--cyber-gold)]/30">
-            <div className="text-[9px] tracking-[3px] text-[var(--cyber-gold)] uppercase mb-3">📝 WEEKLY REFLECTION</div>
+          <motion.div variants={item} className="rounded-xl p-4 card-dark border-[var(--theme-accent-dark)]/30">
+            <div className="text-[9px] tracking-[3px] text-[var(--theme-accent-dark)] uppercase mb-3">📝 WEEKLY REFLECTION</div>
             <div className="space-y-3">
               <div>
                 <div className="text-[10px] text-[var(--muted-foreground)] mb-1">What was your strongest session?</div>
-                <textarea className="w-full bg-[var(--cyber-dim)] rounded-lg p-2 text-[12px] text-[var(--foreground)] border-none outline-none resize-none min-h-[50px]"
+                <textarea className="w-full bg-[var(--theme-dim)] rounded-lg p-2 text-[12px] text-[var(--foreground)] border-none outline-none resize-none min-h-[50px]"
                   defaultValue={entry?.weeklyReflection?.strongestSession || ""}
                   onBlur={(e) => setWeeklyReflection(today, "strongestSession", e.target.value)} />
               </div>
               <div>
                 <div className="text-[10px] text-[var(--muted-foreground)] mb-1">What to improve next week?</div>
-                <textarea className="w-full bg-[var(--cyber-dim)] rounded-lg p-2 text-[12px] text-[var(--foreground)] border-none outline-none resize-none min-h-[50px]"
+                <textarea className="w-full bg-[var(--theme-dim)] rounded-lg p-2 text-[12px] text-[var(--foreground)] border-none outline-none resize-none min-h-[50px]"
                   defaultValue={entry?.weeklyReflection?.improvement || ""}
                   onBlur={(e) => setWeeklyReflection(today, "improvement", e.target.value)} />
               </div>

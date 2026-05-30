@@ -1,24 +1,29 @@
 "use client";
 
+import { useShallow } from "zustand/react/shallow";
 import { useUserStore } from "@/lib/store/useUserStore";
 import { useStreakStore } from "@/lib/store/useStreakStore";
 import { getLevelProgress } from "@/lib/utils/xp";
 import { motion } from "framer-motion";
 
 export function TopHeader() {
-  const { level, levelName, xp, gems } = useUserStore();
-  const { currentStreak } = useStreakStore();
+  const { level, levelName, xp, gems } = useUserStore(
+    useShallow((s) => ({ level: s.level, levelName: s.levelName, xp: s.xp, gems: s.gems }))
+  );
+  const { currentStreak } = useStreakStore(
+    useShallow((s) => ({ currentStreak: s.currentStreak }))
+  );
   const progress = getLevelProgress(xp);
 
   return (
-    <header className="sticky top-0 z-50 glass-strong border-b border-[var(--cyber-border)]">
+    <header className="sticky top-0 z-50 bg-[#121416]/90 backdrop-blur-md border-b border-[var(--theme-border)]">
       <div className="flex items-center justify-between px-4 py-3">
         {/* Title */}
         <div className="flex flex-col">
-          <h1 className="font-display text-xl leading-none tracking-wider text-[var(--foreground)]">
+          <h1 className="font-display text-xl leading-none tracking-tight text-[var(--foreground)]">
             FITNESS OPS
           </h1>
-          <span className="text-[9px] tracking-[3px] text-[var(--cyber-accent)] uppercase">
+          <span className="text-[9px] tracking-widest text-[var(--theme-muted)] uppercase mt-0.5">
             10-WEEK PROTOCOL
           </span>
         </div>
@@ -43,7 +48,7 @@ export function TopHeader() {
           {/* Gems */}
           <div className="flex items-center gap-1">
             <span className="text-sm">💎</span>
-            <span className="text-xs font-bold text-[var(--cyber-blue)]">
+            <span className="text-xs font-bold text-[var(--theme-accent)]">
               {gems}
             </span>
           </div>
@@ -52,14 +57,14 @@ export function TopHeader() {
           <div className="flex items-center gap-2">
             <div className="flex flex-col items-end">
               <div className="flex items-center gap-1.5">
-                <span className="text-[8px] tracking-widest text-[var(--muted-foreground)] uppercase">
+                <span className="text-[8px] tracking-widest text-[var(--theme-muted)] uppercase">
                   LVL
                 </span>
-                <span className="font-display text-base leading-none text-[var(--cyber-accent)]">
+                <span className="font-display text-base leading-none text-[var(--theme-orange)]">
                   {level}
                 </span>
               </div>
-              <span className="text-[7px] tracking-wider text-[var(--muted-foreground)] uppercase">
+              <span className="text-[7px] tracking-wider text-[var(--theme-muted)] uppercase">
                 {levelName}
               </span>
             </div>
@@ -72,7 +77,7 @@ export function TopHeader() {
                   cy="18"
                   r="14"
                   fill="none"
-                  stroke="var(--cyber-dim)"
+                  stroke="var(--theme-dim)"
                   strokeWidth="2.5"
                 />
                 <motion.circle
@@ -80,7 +85,7 @@ export function TopHeader() {
                   cy="18"
                   r="14"
                   fill="none"
-                  stroke="var(--cyber-accent)"
+                  stroke="var(--theme-orange)"
                   strokeWidth="2.5"
                   strokeLinecap="round"
                   strokeDasharray={`${progress * 88} ${88 - progress * 88}`}
@@ -91,7 +96,7 @@ export function TopHeader() {
                   transition={{ duration: 0.8, ease: "easeOut" }}
                 />
               </svg>
-              <span className="absolute inset-0 flex items-center justify-center text-[7px] font-bold text-[var(--cyber-accent)]">
+              <span className="absolute inset-0 flex items-center justify-center text-[7px] font-bold text-[var(--theme-orange)]">
                 XP
               </span>
             </div>

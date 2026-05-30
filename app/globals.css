@@ -1,56 +1,77 @@
 @import "./tailwind-theme.css";
 
-/* ─── CYBERPUNK DARK THEME (default & only) ───────────────────────────────── */
+/* ─── DARK + ORANGE THEME (Figma Reference) ────────────────────────────────── */
 
 :root {
-  /* Shadcn vars mapped to cyberpunk palette */
-  --background: #080B0F;
-  --foreground: #E8EDF5;
-  --card: #0E1318;
-  --card-foreground: #E8EDF5;
-  --popover: #0E1318;
-  --popover-foreground: #E8EDF5;
-  --primary: #00FFB2;
-  --primary-foreground: #080B0F;
-  --secondary: #1A2030;
-  --secondary-foreground: #E8EDF5;
-  --muted: #1A2030;
-  --muted-foreground: #4A5568;
-  --accent: #00FFB2;
-  --accent-foreground: #080B0F;
+  /* Figma color tokens */
+  --color-white: #FFFFFF;
+  --color-black: #0E1216;
+  --color-primary-orange: #FFA05C;
+  --color-inactive-primary: #BD7744;
+  --color-white-stroke: #999999;
+
+  /* Gray scale */
+  --gray-900: #1A1D21;
+  --gray-800: #2A2D32;
+  --gray-700: #3A3E44;
+  --gray-600: #50555C;
+  --gray-500: #696E76;
+  --gray-400: #84898F;
+  --gray-300: #9FA3A9;
+  --gray-200: #BCC0C5;
+  --gray-100: #D8DBDF;
+  --gray-50: #F0F1F3;
+
+  /* Shadcn vars mapped to Figma palette */
+  --background: #121416;
+  --foreground: #F0F1F3;
+  --card: #17191C;
+  --card-foreground: #F0F1F3;
+  --popover: #17191C;
+  --popover-foreground: #F0F1F3;
+  --primary: #FFA05C;
+  --primary-foreground: #0E1216;
+  --secondary: #1A1D21;
+  --secondary-foreground: #F0F1F3;
+  --muted: #1A1D21;
+  --muted-foreground: #696E76;
+  --accent: #FFA05C;
+  --accent-foreground: #0E1216;
   --destructive: #FF4D6D;
-  --border: #1A2030;
-  --input: #1A2030;
-  --ring: #00FFB2;
+  --border: #2A2D32;
+  --input: #1A1D21;
+  --ring: #FFA05C;
   --radius: 0.75rem;
 
   /* Chart colors */
-  --chart-1: #00FFB2;
-  --chart-2: #FFD166;
-  --chart-3: #FF4D6D;
-  --chart-4: #4CC9F0;
-  --chart-5: #C77DFF;
+  --chart-1: #FFA05C;
+  --chart-2: #F06500;
+  --chart-3: #BD7744;
+  --chart-4: #50555C;
+  --chart-5: #84898F;
 
   /* Sidebar */
-  --sidebar: #0A0E14;
-  --sidebar-foreground: #E8EDF5;
-  --sidebar-primary: #00FFB2;
-  --sidebar-primary-foreground: #080B0F;
-  --sidebar-accent: #1A2030;
-  --sidebar-accent-foreground: #E8EDF5;
-  --sidebar-border: #1A2030;
-  --sidebar-ring: #00FFB2;
+  --sidebar: #0E1216;
+  --sidebar-foreground: #F0F1F3;
+  --sidebar-primary: #FFA05C;
+  --sidebar-primary-foreground: #0E1216;
+  --sidebar-accent: #1A1D21;
+  --sidebar-accent-foreground: #F0F1F3;
+  --sidebar-border: #2A2D32;
+  --sidebar-ring: #FFA05C;
 
-  /* Custom cyberpunk colors */
-  --cyber-accent: #00FFB2;
-  --cyber-gold: #FFD166;
-  --cyber-red: #FF4D6D;
-  --cyber-blue: #4CC9F0;
-  --cyber-purple: #C77DFF;
-  --cyber-orange: #FF6B35;
-  --cyber-dim: #2A3545;
-  --cyber-card: #0E1318;
-  --cyber-border: #1A2030;
+  /* Theme semantic colors (replacing cyber-* namespace) */
+  --theme-accent: #FFA05C;
+  --theme-accent-dark: #F06500;
+  --theme-inactive: #BD7744;
+  --theme-orange: #FFA05C;
+  --theme-red: #FF4D6D;
+  --theme-dim: #2A2D32;
+  --theme-card: #17191C;
+  --theme-card-elevated: #1A1D21;
+  --theme-border: #2A2D32;
+  --theme-muted: #696E76;
+
 }
 
 /* ─── BASE STYLES ──────────────────────────────────────────────────────────── */
@@ -62,12 +83,13 @@
   }
 
   html {
-    font-family: var(--font-mono);
+    font-family: var(--font-sans);
     scroll-behavior: smooth;
   }
 
   body {
-    background-color: var(--background);
+    background: linear-gradient(180deg, #353A40 0%, #121416 40%);
+    background-attachment: fixed;
     color: var(--foreground);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -84,77 +106,115 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    background: #1A2030;
+    background: #2A2D32;
     border-radius: 2px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: #2A3545;
+    background: #3A3E44;
   }
 
   /* Selection */
   ::selection {
-    background: rgba(0, 255, 178, 0.2);
-    color: #00FFB2;
+    background: rgba(255, 160, 92, 0.25);
+    color: #FFA05C;
   }
 }
 
 /* ─── UTILITY CLASSES ──────────────────────────────────────────────────────── */
 
 @layer utilities {
-  /* Glassmorphism */
+  /* Card styles */
+  .card-dark {
+    background: linear-gradient(180deg, #32383E 0%, #17191C 100%);
+    border: 1px solid rgba(80, 89, 98, 0.15);
+  }
+
+  .card-elevated {
+    background: #1A1D21;
+    border: 1px solid #2A2D32;
+  }
+
+  /* Glass with warm tint */
   .glass {
-    background: rgba(14, 19, 24, 0.8);
+    background: rgba(23, 25, 28, 0.85);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(26, 32, 48, 0.6);
+    border: 1px solid rgba(42, 45, 50, 0.6);
   }
 
   .glass-strong {
-    background: rgba(14, 19, 24, 0.95);
+    background: rgba(14, 18, 22, 0.95);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(26, 32, 48, 0.8);
+    border: 1px solid rgba(42, 45, 50, 0.8);
   }
 
-  /* Glow effects */
+  /* Subtle shadow effects (replaces neon glows) */
+  .shadow-warm {
+    box-shadow: 0 4px 24px rgba(255, 160, 92, 0.08),
+                0 1px 4px rgba(0, 0, 0, 0.3);
+  }
+
+  .shadow-card {
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3),
+                0 1px 3px rgba(0, 0, 0, 0.2);
+  }
+
+  /* Legacy glow classes mapped to subtle effects */
   .glow-accent {
-    box-shadow: 0 0 20px rgba(0, 255, 178, 0.15),
-                0 0 40px rgba(0, 255, 178, 0.05);
+    box-shadow: 0 4px 20px rgba(255, 160, 92, 0.12);
   }
 
   .glow-gold {
-    box-shadow: 0 0 20px rgba(255, 209, 102, 0.15),
-                0 0 40px rgba(255, 209, 102, 0.05);
+    box-shadow: 0 4px 20px rgba(240, 101, 0, 0.12);
   }
 
   .glow-red {
-    box-shadow: 0 0 20px rgba(255, 77, 109, 0.15),
-                0 0 40px rgba(255, 77, 109, 0.05);
+    box-shadow: 0 4px 20px rgba(255, 77, 109, 0.12);
   }
 
-  /* Text gradient */
+  /* Text gradient — orange */
   .text-gradient-accent {
-    background: linear-gradient(135deg, #00FFB2, #4CC9F0);
+    background: linear-gradient(135deg, #FFA05C, #F06500);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
 
   .text-gradient-gold {
-    background: linear-gradient(135deg, #FFD166, #FF6B35);
+    background: linear-gradient(135deg, #F06500, #BD7744);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
 
-  /* Heading font */
-  .font-display {
-    font-family: var(--font-bebas), "Bebas Neue", sans-serif;
-    letter-spacing: 0.05em;
+  /* Orange button gradient */
+  .btn-primary {
+    background: linear-gradient(90deg, #FFA05C, #F06500);
+    color: #0E1216;
+    font-weight: 700;
+    border-radius: 9999px;
+    transition: all 0.2s;
   }
 
-  /* Animated gradient border */
+  .btn-primary:hover {
+    filter: brightness(1.1);
+    box-shadow: 0 4px 16px rgba(255, 160, 92, 0.25);
+  }
+
+  .btn-primary:active {
+    transform: scale(0.98);
+  }
+
+  /* Heading font */
+  .font-display {
+    font-family: var(--font-sans), "Inter", sans-serif;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+  }
+
+  /* Animated gradient border — warm orange */
   .border-gradient {
     position: relative;
     border: none;
@@ -166,7 +226,7 @@
     inset: 0;
     padding: 1px;
     border-radius: inherit;
-    background: linear-gradient(135deg, #00FFB2, #4CC9F0, #C77DFF);
+    background: linear-gradient(135deg, #FFA05C, #F06500, #BD7744);
     mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     mask-composite: exclude;
     -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);

@@ -1,5 +1,6 @@
 "use client";
 
+import { useShallow } from "zustand/react/shallow";
 import { TopHeader } from "@/components/layout/TopHeader";
 import { BottomNav } from "@/components/layout/BottomNav";
 import { useUserStore } from "@/lib/store/useUserStore";
@@ -35,8 +36,12 @@ const item = {
 };
 
 export default function DashboardPage() {
-  const { level, levelName, xp, gems } = useUserStore();
-  const { currentStreak, longestStreak } = useStreakStore();
+  const { level, levelName, xp, gems } = useUserStore(
+    useShallow((s) => ({ level: s.level, levelName: s.levelName, xp: s.xp, gems: s.gems }))
+  );
+  const { currentStreak, longestStreak } = useStreakStore(
+    useShallow((s) => ({ currentStreak: s.currentStreak, longestStreak: s.longestStreak }))
+  );
   const weeklyCount = useStreakStore((s) => s.getWeeklyCount());
   const today = formatDate();
   const recoveryScore = useJournalStore((s) => s.getRecoveryScore(today));
@@ -52,10 +57,10 @@ export default function DashboardPage() {
 
   const recoveryColor =
     recoveryScore >= 80
-      ? "var(--cyber-accent)"
+      ? "var(--theme-orange)"
       : recoveryScore >= 60
-      ? "var(--cyber-gold)"
-      : "var(--cyber-red)";
+      ? "var(--theme-accent-dark)"
+      : "var(--theme-red)";
 
   return (
     <div className="min-h-screen bg-[var(--background)] pb-24">
@@ -71,21 +76,21 @@ export default function DashboardPage() {
         {narrative && (
           <motion.div
             variants={item}
-            className="relative overflow-hidden rounded-xl border border-[var(--cyber-accent)]/20 bg-gradient-to-r from-[var(--cyber-card)] to-[var(--cyber-accent)]/5 p-4"
+            className="relative overflow-hidden rounded-xl border border-[var(--theme-orange)]/20 card-dark p-4"
           >
-            <div className="absolute top-2 right-3 text-[8px] tracking-[4px] text-[var(--cyber-accent)]/40 uppercase">
+            <div className="absolute top-2 right-3 text-[8px] tracking-[4px] text-[var(--theme-orange)]/60 uppercase">
               WEEK {currentWeek}/10
             </div>
-            <div className="font-display text-lg text-[var(--cyber-accent)] tracking-wider leading-none">
+            <div className="font-display text-lg text-[var(--theme-orange)] tracking-wider leading-none">
               {narrative.title}
             </div>
-            <div className="text-[11px] text-[var(--muted-foreground)] mt-1.5 leading-relaxed">
+            <div className="text-[11px] text-[var(--theme-muted)] mt-1.5 leading-relaxed">
               {narrative.text}
             </div>
             {/* Progress bar for weeks */}
-            <div className="mt-3 h-1 bg-[var(--cyber-dim)] rounded-full overflow-hidden">
+            <div className="mt-3 h-1 bg-[var(--theme-dim)] rounded-full overflow-hidden">
               <motion.div
-                className="h-full bg-[var(--cyber-accent)] rounded-full"
+                className="h-full bg-[var(--theme-orange)] rounded-full"
                 initial={{ width: 0 }}
                 animate={{ width: `${currentWeek * 10}%` }}
                 transition={{ duration: 1, delay: 0.3 }}
@@ -102,7 +107,7 @@ export default function DashboardPage() {
                 className="relative overflow-hidden rounded-xl p-4 border transition-all duration-200 hover:scale-[1.01] active:scale-[0.99]"
                 style={{
                   borderColor: todaySchedule.color + "40",
-                  background: `linear-gradient(135deg, var(--cyber-card) 0%, ${todaySchedule.color}08 100%)`,
+                  background: `linear-gradient(135deg, var(--theme-card) 0%, ${todaySchedule.color}08 100%)`,
                 }}
               >
                 <div className="flex items-start justify-between">
@@ -116,7 +121,7 @@ export default function DashboardPage() {
                     <div className="font-display text-2xl tracking-wider text-[var(--foreground)] mt-0.5">
                       {todayWorkout.title}
                     </div>
-                    <div className="text-[11px] text-[var(--muted-foreground)] mt-0.5">
+                    <div className="text-[11px] text-[var(--theme-muted)] mt-0.5">
                       {todayWorkout.subtitle}
                     </div>
                     {flavor && (
@@ -140,7 +145,7 @@ export default function DashboardPage() {
                 </div>
 
                 <div
-                  className="mt-3 flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider"
+                  className="mt-3 flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider transition-all duration-300"
                   style={{ color: todaySchedule.color }}
                 >
                   <Zap size={12} />
@@ -166,16 +171,16 @@ export default function DashboardPage() {
               color: "#FF6B35",
             },
             {
-              icon: <Target size={16} className="text-[var(--cyber-accent)]" />,
+              icon: <Target size={16} className="text-[var(--theme-orange)]" />,
               value: `${weeklyCount}/6`,
               label: "THIS WEEK",
-              color: "var(--cyber-accent)",
+              color: "var(--theme-orange)",
             },
             {
-              icon: <Trophy size={16} className="text-[var(--cyber-gold)]" />,
+              icon: <Trophy size={16} className="text-[var(--theme-accent-dark)]" />,
               value: level,
               label: levelName.toUpperCase(),
-              color: "var(--cyber-gold)",
+              color: "var(--theme-accent-dark)",
             },
             {
               icon: (
@@ -188,7 +193,7 @@ export default function DashboardPage() {
           ].map((stat, i) => (
             <div
               key={i}
-              className="flex flex-col items-center p-3 rounded-xl bg-[var(--cyber-card)] border border-[var(--cyber-border)]"
+              className="group flex flex-col items-center p-3 rounded-xl card-dark hover:border-[var(--theme-orange)]/50 hover:card-dark hover:-translate-y-1 transition-all duration-300 cursor-default"
             >
               {stat.icon}
               <span
@@ -197,7 +202,7 @@ export default function DashboardPage() {
               >
                 {stat.value}
               </span>
-              <span className="text-[7px] tracking-wider text-[var(--muted-foreground)] mt-0.5 uppercase">
+              <span className="text-[7px] tracking-wider text-[var(--theme-muted)] mt-0.5 uppercase">
                 {stat.label}
               </span>
             </div>
@@ -207,27 +212,27 @@ export default function DashboardPage() {
         {/* XP Progress Card */}
         <motion.div
           variants={item}
-          className="rounded-xl p-4 bg-[var(--cyber-card)] border border-[var(--cyber-border)]"
+          className="rounded-xl p-4 card-dark hover:border-[var(--theme-orange)]/30 transition-all duration-300 shadow-card"
         >
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
-              <span className="text-[9px] tracking-[3px] text-[var(--muted-foreground)] uppercase">
+              <span className="text-[9px] tracking-[3px] text-[var(--theme-muted)] uppercase">
                 EXPERIENCE POINTS
               </span>
             </div>
-            <div className="text-[10px] text-[var(--cyber-accent)]">
+            <div className="text-[10px] text-[var(--theme-orange)] font-bold">
               {xpToNext} XP to Level {level + 1}
             </div>
           </div>
-          <div className="h-2 bg-[var(--cyber-dim)] rounded-full overflow-hidden">
+          <div className="h-2 bg-[var(--theme-dim)] rounded-full overflow-hidden">
             <motion.div
-              className="h-full rounded-full bg-gradient-to-r from-[var(--cyber-accent)] to-[var(--cyber-blue)]"
+              className="h-full rounded-full bg-gradient-to-r from-[var(--theme-orange)] to-[var(--theme-accent-dark)]"
               initial={{ width: 0 }}
               animate={{ width: `${progress * 100}%` }}
               transition={{ duration: 1, delay: 0.4 }}
             />
           </div>
-          <div className="flex justify-between mt-1.5 text-[9px] text-[var(--muted-foreground)]">
+          <div className="flex justify-between mt-1.5 text-[9px] text-[var(--theme-muted)]">
             <span>LVL {level} — {levelName}</span>
             <span>{xp} XP Total</span>
           </div>
@@ -235,7 +240,7 @@ export default function DashboardPage() {
 
         {/* Weekly Schedule Preview */}
         <motion.div variants={item}>
-          <div className="text-[9px] tracking-[3px] text-[var(--muted-foreground)] uppercase mb-2">
+          <div className="text-[9px] tracking-[3px] text-[var(--theme-muted)] uppercase mb-2">
             WEEKLY SPLIT
           </div>
           <div className="grid grid-cols-7 gap-1.5">
@@ -251,19 +256,19 @@ export default function DashboardPage() {
                       : "hover:scale-105"
                   }`}
                   style={{
-                    backgroundColor: isToday ? day.color + "15" : "var(--cyber-card)",
-                    borderColor: isToday ? day.color + "60" : "var(--cyber-border)",
+                    backgroundColor: isToday ? day.color + "15" : "var(--theme-card)",
+                    borderColor: isToday ? day.color + "60" : "var(--theme-border)",
                   }}
                 >
                   <span
                     className="text-[9px] font-bold"
-                    style={{ color: isToday ? day.color : "var(--muted-foreground)" }}
+                    style={{ color: isToday ? day.color : "var(--theme-muted)" }}
                   >
                     {day.day}
                   </span>
                   <span
                     className="text-[7px] mt-0.5"
-                    style={{ color: isToday ? day.color : "var(--cyber-dim)" }}
+                    style={{ color: isToday ? day.color : "var(--theme-dim)" }}
                   >
                     {day.type === "rest" ? "REST" : "TRAIN"}
                   </span>
@@ -276,10 +281,10 @@ export default function DashboardPage() {
         {/* Daily Quests Preview */}
         <motion.div variants={item}>
           <div className="flex items-center justify-between mb-2">
-            <div className="text-[9px] tracking-[3px] text-[var(--muted-foreground)] uppercase">
+            <div className="text-[9px] tracking-[3px] text-[var(--theme-muted)] uppercase">
               DAILY QUESTS
             </div>
-            <span className="text-[9px] text-[var(--cyber-accent)]">
+            <span className="text-[9px] text-[var(--theme-orange)] font-bold">
               +{DAILY_QUESTS.reduce((a, q) => a + q.xp, 0)} XP
             </span>
           </div>
@@ -287,13 +292,13 @@ export default function DashboardPage() {
             {DAILY_QUESTS.map((quest) => (
               <div
                 key={quest.id}
-                className="flex items-center gap-3 p-3 rounded-lg bg-[var(--cyber-card)] border border-[var(--cyber-border)]"
+                className="group flex items-center gap-3 p-3 rounded-lg card-dark hover:border-[var(--theme-orange)]/50 hover:card-dark transition-all duration-300 cursor-pointer"
               >
-                <div className="w-4 h-4 rounded border-2 border-[var(--cyber-dim)] flex-shrink-0" />
+                <div className="w-4 h-4 rounded border-2 border-[var(--theme-dim)] group-hover:border-[var(--theme-orange)] flex-shrink-0 transition-colors duration-300" />
                 <span className="text-[11px] text-[var(--foreground)] flex-1">
                   {quest.title}
                 </span>
-                <span className="text-[9px] text-[var(--cyber-gold)] font-bold">
+                <span className="text-[9px] text-[var(--theme-orange)] font-bold">
                   +{quest.xp}
                 </span>
               </div>
@@ -305,9 +310,9 @@ export default function DashboardPage() {
         {longestStreak > 0 && (
           <motion.div
             variants={item}
-            className="text-center p-3 rounded-xl bg-[var(--cyber-card)] border border-[var(--cyber-border)]"
+            className="text-center p-3 rounded-xl card-dark border-[var(--theme-border)]"
           >
-            <div className="text-[8px] tracking-[3px] text-[var(--muted-foreground)] uppercase">
+            <div className="text-[8px] tracking-[3px] text-[var(--theme-muted)] uppercase">
               LONGEST STREAK RECORD
             </div>
             <div className="font-display text-2xl text-[#FF6B35] mt-0.5">

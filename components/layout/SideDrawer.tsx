@@ -1,5 +1,7 @@
 "use client";
 
+import { useShallow } from "zustand/react/shallow";
+
 import Link from "next/link";
 import {
   Sheet,
@@ -27,7 +29,9 @@ interface SideDrawerProps {
 }
 
 export function SideDrawer({ open, onOpenChange }: SideDrawerProps) {
-  const { level, levelName, xp, gems } = useUserStore();
+  const { level, levelName, xp, gems } = useUserStore(
+    useShallow((s) => ({ level: s.level, levelName: s.levelName, xp: s.xp, gems: s.gems }))
+  );
   const progress = getLevelProgress(xp);
   const xpToNext = getXPToNextLevel(xp);
 
@@ -35,49 +39,51 @@ export function SideDrawer({ open, onOpenChange }: SideDrawerProps) {
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="right"
-        className="w-[300px] bg-[#0A0E14] border-l border-[var(--cyber-border)] p-0"
+        className="w-[300px] bg-[#121416] border-l border-[var(--theme-border)] p-0"
       >
         <SheetHeader className="p-5 pb-3">
-          <SheetTitle className="font-display text-xl tracking-wider text-[var(--foreground)]">
+          <SheetTitle className="font-display text-xl tracking-tight text-[var(--foreground)]">
             COMMAND CENTER
           </SheetTitle>
         </SheetHeader>
 
         {/* User Stats Card */}
-        <div className="mx-4 mb-4 p-4 rounded-xl bg-[var(--cyber-card)] border border-[var(--cyber-border)]">
-          <div className="flex items-center justify-between mb-3">
-            <div>
-              <div className="text-[8px] tracking-[3px] text-[var(--muted-foreground)] uppercase">
-                OPERATIVE STATUS
+        <Link href="/profile" onClick={() => onOpenChange(false)} className="block mx-4 mb-4">
+          <div className="p-4 rounded-xl card-dark hover:border-[var(--theme-orange)]/50 transition-colors">
+            <div className="flex items-center justify-between mb-3">
+              <div>
+                <div className="text-[8px] tracking-widest text-[var(--theme-muted)] uppercase">
+                  OPERATIVE STATUS
+                </div>
+                <div className="font-display text-lg text-[var(--theme-orange)] leading-tight">
+                  LVL {level} — {levelName}
+                </div>
               </div>
-              <div className="font-display text-lg text-[var(--cyber-accent)] leading-tight">
-                LVL {level} — {levelName}
+              <div className="text-center">
+                <div className="flex items-center gap-1">
+                  <span>💎</span>
+                  <span className="font-bold text-[var(--theme-accent)]">{gems}</span>
+                </div>
               </div>
             </div>
-            <div className="text-center">
-              <div className="flex items-center gap-1">
-                <span>💎</span>
-                <span className="font-bold text-[var(--cyber-blue)]">{gems}</span>
+
+            {/* XP Progress */}
+            <div className="space-y-1">
+              <div className="flex justify-between text-[9px] text-[var(--theme-muted)]">
+                <span>{xp} XP</span>
+                <span>{xpToNext} XP to next</span>
+              </div>
+              <div className="h-1.5 bg-[var(--theme-dim)] rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-[var(--theme-orange)] rounded-full transition-all duration-700 ease-out"
+                  style={{ width: `${progress * 100}%` }}
+                />
               </div>
             </div>
           </div>
+        </Link>
 
-          {/* XP Progress */}
-          <div className="space-y-1">
-            <div className="flex justify-between text-[9px] text-[var(--muted-foreground)]">
-              <span>{xp} XP</span>
-              <span>{xpToNext} XP to next</span>
-            </div>
-            <div className="h-1.5 bg-[var(--cyber-dim)] rounded-full overflow-hidden">
-              <div
-                className="h-full bg-[var(--cyber-accent)] rounded-full transition-all duration-700 ease-out"
-                style={{ width: `${progress * 100}%` }}
-              />
-            </div>
-          </div>
-        </div>
-
-        <Separator className="bg-[var(--cyber-border)]" />
+        <Separator className="bg-[var(--theme-border)]" />
 
         {/* Menu Items */}
         <div className="py-2">
@@ -86,14 +92,14 @@ export function SideDrawer({ open, onOpenChange }: SideDrawerProps) {
               key={item.href}
               href={item.href}
               onClick={() => onOpenChange(false)}
-              className="flex items-center gap-3 px-5 py-3 hover:bg-[var(--cyber-card)] transition-colors duration-150"
+              className="flex items-center gap-3 px-5 py-3 hover:card-dark transition-colors duration-150"
             >
               <span className="text-xl">{item.icon}</span>
               <div>
                 <div className="text-sm font-bold text-[var(--foreground)]">
                   {item.label}
                 </div>
-                <div className="text-[10px] text-[var(--muted-foreground)]">
+                <div className="text-[10px] text-[var(--theme-muted)]">
                   {item.desc}
                 </div>
               </div>
@@ -101,14 +107,14 @@ export function SideDrawer({ open, onOpenChange }: SideDrawerProps) {
           ))}
         </div>
 
-        <Separator className="bg-[var(--cyber-border)]" />
+        <Separator className="bg-[var(--theme-border)]" />
 
         {/* Footer */}
         <div className="p-4 text-center">
-          <div className="text-[8px] tracking-[4px] text-[var(--muted-foreground)] uppercase">
+          <div className="text-[8px] tracking-[4px] text-[var(--theme-muted)] uppercase">
             MAY 31 – AUG 6 · 10 WEEKS
           </div>
-          <div className="text-[8px] tracking-[2px] text-[var(--cyber-dim)] uppercase mt-1">
+          <div className="text-[8px] tracking-[2px] text-[var(--theme-dim)] uppercase mt-1">
             75KG → 68KG · BENGALURU
           </div>
         </div>

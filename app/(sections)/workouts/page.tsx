@@ -56,7 +56,7 @@ export default function WorkoutsPage() {
                       borderColor: isToday
                         ? day.color + "80"
                         : day.color + "30",
-                      background: `linear-gradient(135deg, var(--cyber-card) 0%, ${day.color}08 100%)`,
+                      background: `linear-gradient(135deg, var(--theme-card) 0%, ${day.color}08 100%)`,
                     }}
                   >
                     {isToday && (

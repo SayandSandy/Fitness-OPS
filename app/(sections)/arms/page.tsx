@@ -18,40 +18,40 @@ export default function ArmsPage() {
           <p className="text-[11px] text-[var(--muted-foreground)]">4× per week · Biceps, Triceps, Brachialis, Forearms</p>
         </motion.div>
 
-        <motion.div variants={item} className="rounded-xl p-4 bg-[var(--cyber-card)] border border-[var(--cyber-gold)]/30">
-          <div className="text-[10px] text-[var(--cyber-gold)] tracking-[3px] mb-2 uppercase">TRAINING OVERVIEW</div>
+        <motion.div variants={item} className="rounded-xl p-4 card-dark border border-[var(--theme-accent-dark)]/30">
+          <div className="text-[10px] text-[var(--theme-accent-dark)] tracking-[3px] mb-2 uppercase">TRAINING OVERVIEW</div>
           <p className="text-[12px] text-[var(--muted-foreground)] leading-relaxed">{ARM_PROGRAM.overview}</p>
         </motion.div>
 
         <motion.div variants={item}>
-          <div className="font-display text-lg text-[var(--cyber-gold)] tracking-wider mb-2">WEEKLY ARM FREQUENCY</div>
+          <div className="font-display text-lg text-[var(--theme-accent-dark)] tracking-wider mb-2">WEEKLY ARM FREQUENCY</div>
         </motion.div>
         {ARM_PROGRAM.frequency.map((f, i) => (
-          <motion.div key={i} variants={item} className="flex items-start gap-3 rounded-lg p-3 bg-[var(--cyber-card)]">
-            <span className="px-2 py-1 rounded text-[10px] font-bold bg-[var(--cyber-gold)]/20 text-[var(--cyber-gold)] flex-shrink-0">{f.day}</span>
+          <motion.div key={i} variants={item} className="flex items-start gap-3 rounded-lg p-3 card-dark">
+            <span className="px-2 py-1 rounded text-[10px] font-bold bg-[var(--theme-accent-dark)]/20 text-[var(--theme-accent-dark)] flex-shrink-0">{f.day}</span>
             <span className="text-[11px] text-[var(--muted-foreground)] leading-relaxed">{f.focus}</span>
           </motion.div>
         ))}
 
         <motion.div variants={item}>
-          <div className="font-display text-lg text-[var(--cyber-gold)] tracking-wider mb-2">ARM EXERCISE BREAKDOWN</div>
+          <div className="font-display text-lg text-[var(--theme-accent-dark)] tracking-wider mb-2">ARM EXERCISE BREAKDOWN</div>
         </motion.div>
         {ARM_PROGRAM.exercises.map((ex, i) => (
-          <motion.div key={i} variants={item} className="rounded-xl p-4 bg-[var(--cyber-card)] border border-[var(--cyber-border)]">
+          <motion.div key={i} variants={item} className="rounded-xl p-4 card-dark border border-[var(--theme-border)]">
             <div className="flex items-center justify-between mb-1">
-              <span className="font-display text-base text-[var(--cyber-gold)] tracking-wider">{ex.name}</span>
-              <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[var(--cyber-gold)]/20 text-[var(--cyber-gold)]">{ex.sets}</span>
+              <span className="font-display text-base text-[var(--theme-accent-dark)] tracking-wider">{ex.name}</span>
+              <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[var(--theme-accent-dark)]/20 text-[var(--theme-accent-dark)]">{ex.sets}</span>
             </div>
-            <div className="text-[10px] text-[var(--cyber-accent)] mb-1">TARGET: {ex.muscle}</div>
+            <div className="text-[10px] text-[var(--theme-orange)] mb-1">TARGET: {ex.muscle}</div>
             <div className="text-[10px] text-[var(--muted-foreground)]">📈 {ex.prog}</div>
           </motion.div>
         ))}
 
         <motion.div variants={item}>
-          <div className="font-display text-lg text-[var(--cyber-gold)] tracking-wider mb-2">KEY PRINCIPLES</div>
+          <div className="font-display text-lg text-[var(--theme-accent-dark)] tracking-wider mb-2">KEY PRINCIPLES</div>
         </motion.div>
         {ARM_PROGRAM.principles.map((p, i) => (
-          <motion.div key={i} variants={item} className="rounded-lg p-3 bg-[var(--cyber-card)] border-l-2 border-[var(--cyber-gold)] text-[12px] text-[var(--muted-foreground)] leading-relaxed">
+          <motion.div key={i} variants={item} className="rounded-lg p-3 card-dark border-l-2 border-[var(--theme-accent-dark)] text-[12px] text-[var(--muted-foreground)] leading-relaxed">
             → {p}
           </motion.div>
         ))}

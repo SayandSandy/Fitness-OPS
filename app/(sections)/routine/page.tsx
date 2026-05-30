@@ -35,8 +35,8 @@ export default function RoutinePage() {
           const cs = CAT_STYLES[r.cat] || CAT_STYLES.habit;
           return (
             <motion.div key={i} variants={item}
-              className="rounded-xl p-3 bg-[var(--cyber-card)] border cursor-pointer transition-colors"
-              style={{ borderColor: expanded === i ? cs.color + "60" : "var(--cyber-border)" }}
+              className="rounded-xl p-3 card-dark border cursor-pointer transition-colors"
+              style={{ borderColor: expanded === i ? cs.color + "60" : "var(--theme-border)" }}
               onClick={() => setExpanded(expanded === i ? null : i)}>
               <div className="flex items-center gap-3">
                 <span className="text-lg flex-shrink-0">{r.icon}</span>
@@ -55,7 +55,7 @@ export default function RoutinePage() {
               <AnimatePresence>
                 {expanded === i && r.note && (
                   <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
-                    <div className="mt-2 pt-2 text-[12px] text-[var(--muted-foreground)] leading-relaxed" style={{ borderTop: "1px solid var(--cyber-border)" }}>{r.note}</div>
+                    <div className="mt-2 pt-2 text-[12px] text-[var(--muted-foreground)] leading-relaxed" style={{ borderTop: "1px solid var(--theme-border)" }}>{r.note}</div>
                   </motion.div>
                 )}
               </AnimatePresence>

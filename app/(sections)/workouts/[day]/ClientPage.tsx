@@ -1,7 +1,7 @@
 "use client";
 
 import { use } from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { TopHeader } from "@/components/layout/TopHeader";
 import { BottomNav } from "@/components/layout/BottomNav";
 import { WORKOUTS, TAG_STYLES } from "@/lib/data/workouts";
@@ -39,7 +39,7 @@ function RestTimerOverlay({
   const [timeLeft, setTimeLeft] = useState(duration);
   const soundEnabled = useSettingsStore((s) => s.soundEnabled);
 
-  useState(() => {
+  useEffect(() => {
     const interval = setInterval(() => {
       setTimeLeft((prev) => {
         if (prev <= 1) {
@@ -55,7 +55,7 @@ function RestTimerOverlay({
     }, 1000);
 
     return () => clearInterval(interval);
-  });
+  }, [onComplete, soundEnabled]);
 
   const progress = 1 - timeLeft / duration;
   const circumference = 2 * Math.PI * 54;
@@ -63,10 +63,10 @@ function RestTimerOverlay({
 
   const color =
     timeLeft > 30
-      ? "var(--cyber-accent)"
+      ? "var(--theme-orange)"
       : timeLeft > 15
-      ? "var(--cyber-gold)"
-      : "var(--cyber-red)";
+      ? "var(--theme-accent-dark)"
+      : "var(--theme-red)";
 
   return (
     <motion.div
@@ -88,8 +88,8 @@ function RestTimerOverlay({
               cy="60"
               r="54"
               fill="none"
-              stroke="var(--cyber-dim)"
-              strokeWidth="4"
+              stroke="var(--theme-dim)"
+              strokeWidth="8"
             />
             <circle
               cx="60"
@@ -97,7 +97,7 @@ function RestTimerOverlay({
               r="54"
               fill="none"
               stroke={color}
-              strokeWidth="4"
+              strokeWidth="8"
               strokeLinecap="round"
               strokeDasharray={circumference}
               strokeDashoffset={dashOffset}
@@ -117,9 +117,9 @@ function RestTimerOverlay({
         <div className="flex gap-3">
           <button
             onClick={onSkip}
-            className="px-6 py-2.5 rounded-lg border text-[11px] font-bold tracking-wider uppercase transition-all hover:bg-[var(--cyber-card)]"
+            className="px-6 py-2.5 rounded-lg border text-[11px] font-bold tracking-wider uppercase transition-all hover:card-dark"
             style={{
-              borderColor: "var(--cyber-border)",
+              borderColor: "var(--theme-border)",
               color: "var(--muted-foreground)",
             }}
           >
@@ -127,7 +127,7 @@ function RestTimerOverlay({
           </button>
           <button
             onClick={() => setTimeLeft((t) => t + 30)}
-            className="px-6 py-2.5 rounded-lg border text-[11px] font-bold tracking-wider uppercase transition-all hover:bg-[var(--cyber-card)]"
+            className="px-6 py-2.5 rounded-lg border text-[11px] font-bold tracking-wider uppercase transition-all hover:card-dark"
             style={{
               borderColor: color + "60",
               color: color,
@@ -172,7 +172,7 @@ function WorkoutComplete({
           animate={{ scale: 1 }}
           transition={{ type: "spring", stiffness: 300, delay: 0.4 }}
         >
-          <Trophy size={64} className="text-[var(--cyber-gold)]" />
+          <Trophy size={64} className="text-[var(--theme-accent-dark)]" />
         </motion.div>
 
         <div className="font-display text-3xl tracking-wider text-[var(--foreground)] text-center">
@@ -181,7 +181,7 @@ function WorkoutComplete({
 
         <div className="flex gap-6 mt-2">
           <div className="text-center">
-            <div className="font-display text-2xl text-[var(--cyber-accent)]">
+            <div className="font-display text-2xl text-[var(--theme-orange)]">
               {exerciseCount}
             </div>
             <div className="text-[8px] tracking-wider text-[var(--muted-foreground)] uppercase">
@@ -189,7 +189,7 @@ function WorkoutComplete({
             </div>
           </div>
           <div className="text-center">
-            <div className="font-display text-2xl text-[var(--cyber-gold)]">
+            <div className="font-display text-2xl text-[var(--theme-accent-dark)]">
               +{xpEarned}
             </div>
             <div className="text-[8px] tracking-wider text-[var(--muted-foreground)] uppercase">
@@ -202,7 +202,7 @@ function WorkoutComplete({
           onClick={onClose}
           className="mt-4 px-8 py-3 rounded-xl font-bold text-sm tracking-wider uppercase transition-all hover:scale-105 active:scale-95"
           style={{
-            backgroundColor: "var(--cyber-accent)",
+            backgroundColor: "var(--theme-orange)",
             color: "var(--background)",
           }}
         >
@@ -295,7 +295,7 @@ export default function WorkoutDayClientPage({ day }: { day: string }) {
         </AnimatePresence>
 
         {/* Top bar */}
-        <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--cyber-border)]">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--theme-border)]">
           <button
             onClick={() => setSessionActive(false)}
             className="text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
@@ -305,16 +305,16 @@ export default function WorkoutDayClientPage({ day }: { day: string }) {
           <div className="text-[10px] tracking-[3px] text-[var(--muted-foreground)] uppercase">
             {currentEx + 1} / {workout.exercises.length}
           </div>
-          <div className="flex items-center gap-1 text-[10px] text-[var(--cyber-gold)]">
+          <div className="flex items-center gap-1 text-[10px] text-[var(--theme-accent-dark)]">
             <Zap size={12} />
             <span>+{totalXP}</span>
           </div>
         </div>
 
         {/* Progress bar */}
-        <div className="h-1 bg-[var(--cyber-dim)]">
+        <div className="h-1 bg-[var(--theme-dim)]">
           <div
-            className="h-full bg-[var(--cyber-accent)] transition-all duration-300"
+            className="h-full bg-[var(--theme-orange)] transition-all duration-300"
             style={{
               width: `${((currentEx + (setsCompleted / targetSets)) / workout.exercises.length) * 100}%`,
             }}
@@ -355,11 +355,11 @@ export default function WorkoutDayClientPage({ day }: { day: string }) {
                 style={{
                   borderColor:
                     i < setsCompleted
-                      ? "var(--cyber-accent)"
-                      : "var(--cyber-dim)",
+                      ? "var(--theme-orange)"
+                      : "var(--theme-dim)",
                   backgroundColor:
                     i < setsCompleted
-                      ? "var(--cyber-accent)"
+                      ? "var(--theme-orange)"
                       : "transparent",
                   color:
                     i < setsCompleted
@@ -386,7 +386,7 @@ export default function WorkoutDayClientPage({ day }: { day: string }) {
             onClick={handleCompleteSet}
             className="w-full max-w-xs py-4 rounded-xl font-bold text-base tracking-wider uppercase transition-all"
             style={{
-              backgroundColor: "var(--cyber-accent)",
+              backgroundColor: "var(--theme-orange)",
               color: "var(--background)",
             }}
           >
@@ -397,7 +397,7 @@ export default function WorkoutDayClientPage({ day }: { day: string }) {
         </motion.div>
 
         {/* Navigation */}
-        <div className="flex items-center justify-between px-6 py-4 border-t border-[var(--cyber-border)]">
+        <div className="flex items-center justify-between px-6 py-4 border-t border-[var(--theme-border)]">
           <button
             onClick={() => setCurrentEx(Math.max(0, currentEx - 1))}
             disabled={currentEx === 0}
@@ -451,7 +451,7 @@ export default function WorkoutDayClientPage({ day }: { day: string }) {
           className="rounded-xl p-4 mb-4 border-l-[3px]"
           style={{
             borderColor: workout.color,
-            backgroundColor: "var(--cyber-card)",
+            backgroundColor: "var(--theme-card)",
           }}
         >
           <div
@@ -473,7 +473,7 @@ export default function WorkoutDayClientPage({ day }: { day: string }) {
           )}
 
           <div className="mt-3 text-[11px]">
-            <span className="text-[var(--cyber-accent)] font-bold">
+            <span className="text-[var(--theme-orange)] font-bold">
               WARM-UP:{" "}
             </span>
             <span className="text-[var(--muted-foreground)]">
@@ -534,7 +534,7 @@ export default function WorkoutDayClientPage({ day }: { day: string }) {
                 className="rounded-xl p-3 border-l-[3px]"
                 style={{
                   borderColor: tag.color,
-                  backgroundColor: "var(--cyber-card)",
+                  backgroundColor: "var(--theme-card)",
                   opacity: isCompleted ? 0.5 : 1,
                 }}
               >
@@ -553,12 +553,12 @@ export default function WorkoutDayClientPage({ day }: { day: string }) {
                       {isCompleted ? (
                         <CheckCircle2
                           size={14}
-                          className="text-[var(--cyber-accent)] flex-shrink-0"
+                          className="text-[var(--theme-orange)] flex-shrink-0"
                         />
                       ) : (
                         <Circle
                           size={14}
-                          className="text-[var(--cyber-dim)] flex-shrink-0"
+                          className="text-[var(--theme-dim)] flex-shrink-0"
                         />
                       )}
                       <span className="text-[13px] font-bold text-[var(--foreground)]">
@@ -580,7 +580,7 @@ export default function WorkoutDayClientPage({ day }: { day: string }) {
                       <div
                         key={j}
                         className="rounded-md px-2 py-1 text-center"
-                        style={{ backgroundColor: "var(--cyber-dim)" }}
+                        style={{ backgroundColor: "var(--theme-dim)" }}
                       >
                         <div className="text-[7px] text-[var(--muted-foreground)]">
                           {b.l}
@@ -604,11 +604,11 @@ export default function WorkoutDayClientPage({ day }: { day: string }) {
         <div
           className="mt-3 rounded-xl p-3 border-l-[3px]"
           style={{
-            borderColor: "#67E8F9",
-            backgroundColor: "var(--cyber-card)",
+            borderColor: "var(--theme-orange)",
+            backgroundColor: "var(--theme-card)",
           }}
         >
-          <span className="text-[#67E8F9] font-bold text-[10px]">
+          <span className="text-[var(--theme-orange)] font-bold text-[10px]">
             COOL-DOWN:{" "}
           </span>
           <span className="text-[11px] text-[var(--muted-foreground)]">

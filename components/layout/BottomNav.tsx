@@ -20,7 +20,7 @@ export function BottomNav() {
 
   return (
     <>
-      <nav className="fixed bottom-0 left-0 right-0 z-50 glass-strong border-t border-[var(--cyber-border)]">
+      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-[#121416]/90 backdrop-blur-md border-t border-[var(--theme-border)] pb-safe">
         <div className="flex items-stretch justify-around max-w-lg mx-auto">
           {NAV_ITEMS.map((item) => {
             const isActive =
@@ -38,23 +38,23 @@ export function BottomNav() {
                 {isActive && (
                   <motion.div
                     layoutId="bottomNavIndicator"
-                    className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-[var(--cyber-accent)] rounded-full"
+                    className="absolute top-0 left-1/2 -translate-x-1/2 w-10 h-[3px] bg-[var(--theme-orange)] rounded-b-md shadow-sm"
                     transition={{ type: "spring", stiffness: 400, damping: 30 }}
                   />
                 )}
                 <Icon
                   size={20}
-                  className={`transition-colors duration-200 ${
+                  className={`transition-all duration-300 ${
                     isActive
-                      ? "text-[var(--cyber-accent)]"
-                      : "text-[var(--muted-foreground)] group-hover:text-[var(--foreground)]"
+                      ? "text-[var(--theme-orange)] scale-110 drop-shadow-md"
+                      : "text-[var(--theme-muted)] group-hover:text-[var(--foreground)] group-hover:scale-105"
                   }`}
                 />
                 <span
-                  className={`text-[9px] mt-0.5 tracking-wider uppercase transition-colors duration-200 ${
+                  className={`text-[9px] mt-1 tracking-widest uppercase transition-all duration-300 font-bold ${
                     isActive
-                      ? "text-[var(--cyber-accent)]"
-                      : "text-[var(--muted-foreground)] group-hover:text-[var(--foreground)]"
+                      ? "text-[var(--theme-orange)]"
+                      : "text-[var(--theme-muted)] group-hover:text-[var(--foreground)]"
                   }`}
                 >
                   {item.label}
@@ -70,9 +70,9 @@ export function BottomNav() {
           >
             <Menu
               size={20}
-              className="text-[var(--muted-foreground)] group-hover:text-[var(--foreground)] transition-colors duration-200"
+              className="text-[var(--theme-muted)] group-hover:text-[var(--foreground)] group-hover:scale-105 transition-all duration-300"
             />
-            <span className="text-[9px] mt-0.5 tracking-wider uppercase text-[var(--muted-foreground)] group-hover:text-[var(--foreground)] transition-colors duration-200">
+            <span className="text-[9px] mt-1 tracking-widest font-bold uppercase text-[var(--theme-muted)] group-hover:text-[var(--foreground)] transition-all duration-300">
               More
             </span>
           </button>

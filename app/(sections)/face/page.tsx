@@ -17,7 +17,7 @@ export default function FacePage() {
           <p className="text-[11px] text-[var(--muted-foreground)]">Daily exercises + lifestyle hacks for facial definition</p>
         </motion.div>
 
-        <motion.div variants={item} className="rounded-xl p-4 bg-[var(--cyber-card)] border border-[#FF9EF5]/30">
+        <motion.div variants={item} className="rounded-xl p-4 card-dark border border-[#FF9EF5]/30">
           <div className="text-[10px] text-[#FF9EF5] tracking-[3px] mb-2 uppercase">⚠️ KEY TRUTH</div>
           <p className="text-[12px] text-[var(--muted-foreground)] leading-relaxed">
             You cannot spot-reduce face fat directly. It burns as overall body fat drops — and it&apos;s often the last to go.
@@ -29,12 +29,12 @@ export default function FacePage() {
           <div className="font-display text-lg text-[#FF9EF5] tracking-wider mb-2">DAILY FACE EXERCISE ROUTINE (7 min)</div>
         </motion.div>
         {FACE_DATA.exercises.map((ex, i) => (
-          <motion.div key={i} variants={item} className="flex items-start justify-between gap-3 rounded-lg p-3 bg-[var(--cyber-card)] border-l-2 border-[#FF9EF5]/40">
+          <motion.div key={i} variants={item} className="flex items-start justify-between gap-3 rounded-lg p-3 card-dark border-l-2 border-[#FF9EF5]/40">
             <div className="flex-1">
               <div className="text-[13px] font-bold text-[var(--foreground)] mb-0.5">{ex.name}</div>
               <div className="text-[10px] text-[var(--muted-foreground)] leading-relaxed">{ex.note}</div>
             </div>
-            <div className="px-2 py-1 rounded bg-[var(--cyber-dim)] text-[10px] text-[#FF9EF5] whitespace-nowrap flex-shrink-0">{ex.reps}</div>
+            <div className="px-2 py-1 rounded bg-[var(--theme-dim)] text-[10px] text-[#FF9EF5] whitespace-nowrap flex-shrink-0">{ex.reps}</div>
           </motion.div>
         ))}
 
@@ -42,7 +42,7 @@ export default function FacePage() {
           <div className="font-display text-lg text-[#FF9EF5] tracking-wider mb-2">LIFESTYLE TIPS</div>
         </motion.div>
         {FACE_DATA.tips.map((t, i) => (
-          <motion.div key={i} variants={item} className="flex items-start gap-3 rounded-lg p-3 bg-[var(--cyber-card)]">
+          <motion.div key={i} variants={item} className="flex items-start gap-3 rounded-lg p-3 card-dark">
             <span className="text-lg flex-shrink-0">{t.icon}</span>
             <span className="text-[12px] text-[var(--muted-foreground)] leading-relaxed">{t.tip}</span>
           </motion.div>
