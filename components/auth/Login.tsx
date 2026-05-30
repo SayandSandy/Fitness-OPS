@@ -7,7 +7,8 @@ import {
   signInWithEmailAndPassword, 
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
-  signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
   RecaptchaVerifier,
   signInWithPhoneNumber
 } from "firebase/auth";
@@ -32,6 +33,11 @@ export function Login() {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    // Catch any errors from redirect sign-in
+    getRedirectResult(auth).catch((err) => {
+      setError(err.message || "Google Sign-In failed");
+    });
+
     // Initialize reCAPTCHA verifier for phone auth
     if (!(window as any).recaptchaVerifier) {
       (window as any).recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
@@ -54,10 +60,9 @@ export function Login() {
     setIsLoading(true);
     try {
       const provider = new GoogleAuthProvider();
-      await signInWithPopup(auth, provider);
+      await signInWithRedirect(auth, provider);
     } catch (err: any) {
       setError(err.message || "Google Sign-In failed");
-    } finally {
       setIsLoading(false);
     }
   };
