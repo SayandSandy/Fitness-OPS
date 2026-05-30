@@ -1,26 +1,240 @@
-@import "tailwindcss";
+@import "./tailwind-theme.css";
+
+/* ─── CYBERPUNK DARK THEME (default & only) ───────────────────────────────── */
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Shadcn vars mapped to cyberpunk palette */
+  --background: #080B0F;
+  --foreground: #E8EDF5;
+  --card: #0E1318;
+  --card-foreground: #E8EDF5;
+  --popover: #0E1318;
+  --popover-foreground: #E8EDF5;
+  --primary: #00FFB2;
+  --primary-foreground: #080B0F;
+  --secondary: #1A2030;
+  --secondary-foreground: #E8EDF5;
+  --muted: #1A2030;
+  --muted-foreground: #4A5568;
+  --accent: #00FFB2;
+  --accent-foreground: #080B0F;
+  --destructive: #FF4D6D;
+  --border: #1A2030;
+  --input: #1A2030;
+  --ring: #00FFB2;
+  --radius: 0.75rem;
+
+  /* Chart colors */
+  --chart-1: #00FFB2;
+  --chart-2: #FFD166;
+  --chart-3: #FF4D6D;
+  --chart-4: #4CC9F0;
+  --chart-5: #C77DFF;
+
+  /* Sidebar */
+  --sidebar: #0A0E14;
+  --sidebar-foreground: #E8EDF5;
+  --sidebar-primary: #00FFB2;
+  --sidebar-primary-foreground: #080B0F;
+  --sidebar-accent: #1A2030;
+  --sidebar-accent-foreground: #E8EDF5;
+  --sidebar-border: #1A2030;
+  --sidebar-ring: #00FFB2;
+
+  /* Custom cyberpunk colors */
+  --cyber-accent: #00FFB2;
+  --cyber-gold: #FFD166;
+  --cyber-red: #FF4D6D;
+  --cyber-blue: #4CC9F0;
+  --cyber-purple: #C77DFF;
+  --cyber-orange: #FF6B35;
+  --cyber-dim: #2A3545;
+  --cyber-card: #0E1318;
+  --cyber-border: #1A2030;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+/* ─── BASE STYLES ──────────────────────────────────────────────────────────── */
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  * {
+    border-color: var(--border);
+    outline-color: color-mix(in srgb, var(--ring) 50%, transparent);
+  }
+
+  html {
+    font-family: var(--font-mono);
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #1A2030;
+    border-radius: 2px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #2A3545;
+  }
+
+  /* Selection */
+  ::selection {
+    background: rgba(0, 255, 178, 0.2);
+    color: #00FFB2;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* ─── UTILITY CLASSES ──────────────────────────────────────────────────────── */
+
+@layer utilities {
+  /* Glassmorphism */
+  .glass {
+    background: rgba(14, 19, 24, 0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(26, 32, 48, 0.6);
+  }
+
+  .glass-strong {
+    background: rgba(14, 19, 24, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(26, 32, 48, 0.8);
+  }
+
+  /* Glow effects */
+  .glow-accent {
+    box-shadow: 0 0 20px rgba(0, 255, 178, 0.15),
+                0 0 40px rgba(0, 255, 178, 0.05);
+  }
+
+  .glow-gold {
+    box-shadow: 0 0 20px rgba(255, 209, 102, 0.15),
+                0 0 40px rgba(255, 209, 102, 0.05);
+  }
+
+  .glow-red {
+    box-shadow: 0 0 20px rgba(255, 77, 109, 0.15),
+                0 0 40px rgba(255, 77, 109, 0.05);
+  }
+
+  /* Text gradient */
+  .text-gradient-accent {
+    background: linear-gradient(135deg, #00FFB2, #4CC9F0);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .text-gradient-gold {
+    background: linear-gradient(135deg, #FFD166, #FF6B35);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Heading font */
+  .font-display {
+    font-family: var(--font-bebas), "Bebas Neue", sans-serif;
+    letter-spacing: 0.05em;
+  }
+
+  /* Animated gradient border */
+  .border-gradient {
+    position: relative;
+    border: none;
+  }
+
+  .border-gradient::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    padding: 1px;
+    border-radius: inherit;
+    background: linear-gradient(135deg, #00FFB2, #4CC9F0, #C77DFF);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    pointer-events: none;
+  }
+
+  /* Pulse animation for streak */
+  .pulse-fire {
+    animation: pulseFire 2s ease-in-out infinite;
+  }
+
+  /* No scrollbar */
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* ─── KEYFRAMES ────────────────────────────────────────────────────────────── */
+
+@keyframes pulseFire {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+/* ─── REDUCED MOTION ───────────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .pulse-fire {
+    animation: none;
+  }
 }
