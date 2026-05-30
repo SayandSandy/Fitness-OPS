@@ -38,11 +38,12 @@ export function Login() {
       setError(err.message || "Google Sign-In failed");
     });
 
-    // Initialize reCAPTCHA verifier for phone auth
-    if (!(window as any).recaptchaVerifier) {
-      (window as any).recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
-        'size': 'invisible',
-      });
+    // Clear stale recaptcha to prevent React Strict Mode DOM conflicts
+    if ((window as any).recaptchaVerifier) {
+      try {
+        (window as any).recaptchaVerifier.clear();
+      } catch (e) {}
+      (window as any).recaptchaVerifier = null;
     }
 
     // Handle click outside for dropdown
@@ -72,6 +73,11 @@ export function Login() {
     setError(null);
     setIsLoading(true);
     try {
+      if (!(window as any).recaptchaVerifier) {
+        (window as any).recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+          'size': 'invisible',
+        });
+      }
       const appVerifier = (window as any).recaptchaVerifier;
       const fullPhoneNumber = `${selectedCountry.code}${phoneNumber.replace(/\s+/g, '')}`;
       const confirmationResult = await signInWithPhoneNumber(auth, fullPhoneNumber, appVerifier);
@@ -129,6 +135,12 @@ export function Login() {
               : "Register your biometrics to begin the 10-week protocol."}
           </p>
         </div>
+
+        {error && (
+          <div className="rounded border border-red-500/50 bg-red-500/10 p-3 text-center text-xs text-red-500">
+            {error}
+          </div>
+        )}
 
         {loginMethod === "email" ? (
           <form onSubmit={handleEmailSubmit} className="space-y-6">
