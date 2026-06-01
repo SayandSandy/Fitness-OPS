@@ -52,7 +52,7 @@ export function SideDrawer({ open, onOpenChange }: SideDrawerProps) {
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="right"
-        className="w-[300px] bg-[#121416] border-l border-[var(--theme-border)] p-0"
+        className="w-[300px] bg-[#121416] border-l border-[var(--theme-border)] p-0 flex flex-col h-full overflow-y-auto"
       >
         <SheetHeader className="p-5 pb-3">
           <SheetTitle className="font-display text-xl tracking-tight text-[var(--foreground)]">
