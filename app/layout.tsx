@@ -40,7 +40,7 @@ export default function RootLayout({
       lang="en"
       className={`${inter.variable} dark h-full`}
     >
-      <body className="min-h-full flex flex-col bg-[#121416] text-[#F0F1F3] antialiased" style={{ fontFamily: "'SF Pro Display', var(--font-inter), -apple-system, BlinkMacSystemFont, 'Inter', sans-serif" }}>
+      <body className="min-h-full flex flex-col bg-[#121416] text-[#F0F1F3] antialiased font-sans">
         <AuthProvider>
           <TooltipProvider>{children}</TooltipProvider>
         </AuthProvider>

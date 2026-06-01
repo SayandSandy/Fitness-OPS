@@ -12,8 +12,12 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { useUserStore } from "@/lib/store/useUserStore";
 import { getLevelProgress, getXPToNextLevel } from "@/lib/utils/xp";
+import { LogOut } from "lucide-react";
+import { auth } from "@/lib/firebase";
+import { signOut } from "firebase/auth";
 
 const MENU_ITEMS = [
+  { href: "/profile",   icon: "👤", label: "Profile",   desc: "Stats & Armory" },
   { href: "/schedule",  icon: "📅", label: "Schedule",  desc: "10-week overview" },
   { href: "/arms",      icon: "🦾", label: "Arms",      desc: "Arm development program" },
   { href: "/posture",   icon: "🧍", label: "Posture",   desc: "APT & shoulder fix" },
@@ -35,6 +39,15 @@ export function SideDrawer({ open, onOpenChange }: SideDrawerProps) {
   const progress = getLevelProgress(xp);
   const xpToNext = getXPToNextLevel(xp);
 
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      window.location.href = "/";
+    } catch (error) {
+      console.error("Failed to log out", error);
+    }
+  };
+
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
@@ -52,7 +65,7 @@ export function SideDrawer({ open, onOpenChange }: SideDrawerProps) {
           <div className="p-4 rounded-xl card-dark hover:border-[var(--theme-orange)]/50 transition-colors">
             <div className="flex items-center justify-between mb-3">
               <div>
-                <div className="text-[8px] tracking-widest text-[var(--theme-muted)] uppercase">
+                <div className="text-[10px] tracking-widest text-[var(--theme-muted)] uppercase">
                   OPERATIVE STATUS
                 </div>
                 <div className="font-display text-lg text-[var(--theme-orange)] leading-tight">
@@ -109,12 +122,23 @@ export function SideDrawer({ open, onOpenChange }: SideDrawerProps) {
 
         <Separator className="bg-[var(--theme-border)]" />
 
+        {/* Logout */}
+        <div className="px-5 py-4">
+          <button
+            onClick={handleLogout}
+            className="flex items-center justify-center gap-2 w-full py-3 rounded-lg border border-red-500/30 text-red-500 hover:bg-red-500/10 transition-colors text-xs font-bold tracking-widest uppercase"
+          >
+            <LogOut size={14} />
+            DISCONNECT
+          </button>
+        </div>
+
         {/* Footer */}
         <div className="p-4 text-center">
-          <div className="text-[8px] tracking-[4px] text-[var(--theme-muted)] uppercase">
-            MAY 31 – AUG 6 · 10 WEEKS
+          <div className="text-[10px] tracking-[4px] text-[var(--theme-muted)] uppercase">
+            10-WEEK PROTOCOL
           </div>
-          <div className="text-[8px] tracking-[2px] text-[var(--theme-dim)] uppercase mt-1">
+          <div className="text-[10px] tracking-[2px] text-[var(--theme-dim)] uppercase mt-1">
             75KG → 68KG · BENGALURU
           </div>
         </div>

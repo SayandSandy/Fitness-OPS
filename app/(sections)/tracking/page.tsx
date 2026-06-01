@@ -8,9 +8,91 @@ import { useStreakStore } from "@/lib/store/useStreakStore";
 import { useJournalStore } from "@/lib/store/useJournalStore";
 import { formatDate, getWeekDates, isToday } from "@/lib/utils/dates";
 import { motion } from "framer-motion";
+import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer, Tooltip, ReferenceLine } from "recharts";
+import { useWeightStore } from "@/lib/store/useWeightStore";
 
 const container = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.04 } } };
 const item = { hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } };
+
+function WeightTracker() {
+  const { logWeight, getHistory, getLatest } = useWeightStore(useShallow((s) => ({
+    logWeight: s.logWeight,
+    getHistory: s.getHistory,
+    getLatest: s.getLatest
+  })));
+  const [weightInput, setWeightInput] = useState("");
+  const history = getHistory();
+  const latest = getLatest();
+
+  // We want last 10 entries for the chart, but all data for reference
+  const chartData = history.slice(-10).map(entry => ({
+    ...entry,
+    dateLabel: entry.date.substring(5) // MM-DD
+  }));
+
+  const handleLog = () => {
+    const val = parseFloat(weightInput);
+    if (!isNaN(val) && val > 30 && val < 200) {
+      logWeight(formatDate(), val);
+      setWeightInput("");
+    }
+  };
+
+  const delta = latest ? (latest - 75).toFixed(1) : "0.0"; // 75kg is start weight
+
+  return (
+    <div className="space-y-4">
+      {/* Quick Entry */}
+      <div className="flex gap-2">
+        <input 
+          type="number" 
+          step="0.1" 
+          placeholder="Today's weight (kg)" 
+          value={weightInput}
+          onChange={(e) => setWeightInput(e.target.value)}
+          className="flex-1 bg-[var(--theme-dim)] border border-[var(--theme-border)] rounded-xl px-4 text-sm text-[var(--foreground)]"
+        />
+        <button 
+          onClick={handleLog}
+          className="bg-[var(--theme-orange)] text-black px-6 py-3 rounded-xl font-bold text-[10px] tracking-wider uppercase hover:brightness-110 transition-all"
+        >
+          LOG
+        </button>
+      </div>
+
+      {/* Chart */}
+      <div className="h-48 w-full relative">
+        <ResponsiveContainer width="100%" height="100%">
+          <AreaChart data={chartData} margin={{ top: 10, right: 0, left: -20, bottom: 0 }}>
+            <defs>
+              <linearGradient id="colorWeight" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="var(--theme-orange)" stopOpacity={0.3}/>
+                <stop offset="95%" stopColor="var(--theme-orange)" stopOpacity={0}/>
+              </linearGradient>
+            </defs>
+            <XAxis dataKey="dateLabel" axisLine={false} tickLine={false} tick={{ fontSize: 9, fill: 'var(--muted-foreground)' }} />
+            <YAxis domain={['dataMin - 1', 'dataMax + 1']} axisLine={false} tickLine={false} tick={{ fontSize: 9, fill: 'var(--muted-foreground)' }} />
+            <Tooltip 
+              contentStyle={{ backgroundColor: 'var(--theme-card)', borderColor: 'var(--theme-border)', borderRadius: '8px', fontSize: '10px' }}
+              itemStyle={{ color: 'var(--theme-orange)', fontWeight: 'bold' }}
+            />
+            <ReferenceLine y={75} stroke="var(--theme-red)" strokeDasharray="3 3" opacity={0.5} />
+            <ReferenceLine y={68} stroke="var(--theme-accent-dark)" strokeDasharray="3 3" opacity={0.5} />
+            <Area type="monotone" dataKey="weight" stroke="var(--theme-orange)" strokeWidth={2} fillOpacity={1} fill="url(#colorWeight)" />
+          </AreaChart>
+        </ResponsiveContainer>
+        {latest && (
+          <div className="absolute top-0 right-0 flex flex-col items-end">
+            <div className="font-display text-2xl text-[var(--foreground)]">{latest} kg</div>
+            <div className={`text-[10px] font-bold ${parseFloat(delta) > 0 ? 'text-[var(--theme-red)]' : 'text-emerald-400'}`}>
+              {parseFloat(delta) > 0 ? '+' : ''}{delta} kg from start
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
 
 // Simple Streak Calendar
 function StreakCalendar() {
@@ -137,6 +219,12 @@ export default function TrackingPage() {
         {/* Weekly Meter */}
         <motion.div variants={item} className="rounded-xl p-4 card-dark border border-[var(--theme-border)]">
           <WeeklyMeter />
+        </motion.div>
+
+        {/* Body Weight Tracking */}
+        <motion.div variants={item} className="rounded-xl p-4 card-dark border border-[var(--theme-border)]">
+          <div className="text-[9px] tracking-[3px] text-[var(--muted-foreground)] uppercase mb-3">BODY WEIGHT TRACKING</div>
+          <WeightTracker />
         </motion.div>
 
         {/* Streak Calendar */}

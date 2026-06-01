@@ -13,6 +13,8 @@ import { XP_AWARDS } from "@/lib/utils/xp";
 import { formatDate } from "@/lib/utils/dates";
 import { playBeep } from "@/lib/utils/sounds";
 import { useSettingsStore } from "@/lib/store/useSettingsStore";
+import { useQuestStore } from "@/lib/store/useQuestStore";
+import { LevelUpModal } from "@/components/layout/LevelUpModal";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   CheckCircle2,
@@ -227,6 +229,13 @@ export default function WorkoutDayClientPage({ day }: { day: string }) {
 
   const addXP = useUserStore((s) => s.addXP);
   const addCheckin = useStreakStore((s) => s.addCheckin);
+  const completeQuest = useQuestStore((s) => s.completeQuest);
+
+  const [levelUpData, setLevelUpData] = useState<{ show: boolean; level: number; name: string }>({
+    show: false,
+    level: 0,
+    name: "",
+  });
 
   if (!workout) {
     return (
@@ -254,10 +263,20 @@ export default function WorkoutDayClientPage({ day }: { day: string }) {
         // Workout complete!
         const finalXP = totalXP + XP_AWARDS.complete_set + XP_AWARDS.complete_exercise + XP_AWARDS.complete_workout;
         setTotalXP(finalXP);
-        addXP(finalXP);
+        const leveledUp = addXP(finalXP);
         addCheckin(formatDate(), "complete", day);
+        
+        // Auto-complete daily workout quest
+        completeQuest("daily_workout");
+
         setSessionActive(false);
         setShowComplete(true);
+
+        if (leveledUp) {
+          const freshLevel = useUserStore.getState().level;
+          const freshName = useUserStore.getState().levelName;
+          setLevelUpData({ show: true, level: freshLevel, name: freshName });
+        }
       }
     } else {
       setShowRestTimer(true);
@@ -434,6 +453,13 @@ export default function WorkoutDayClientPage({ day }: { day: string }) {
   return (
     <div className="min-h-screen bg-[var(--background)] pb-24">
       <TopHeader />
+
+      <LevelUpModal
+        isOpen={levelUpData.show}
+        onClose={() => setLevelUpData({ ...levelUpData, show: false })}
+        newLevel={levelUpData.level}
+        newLevelName={levelUpData.name}
+      />
 
       <AnimatePresence>
         {showComplete && (

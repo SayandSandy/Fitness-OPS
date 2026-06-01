@@ -1,18 +1,23 @@
 "use client";
 
+import { useState } from "react";
 import { useShallow } from "zustand/react/shallow";
 import { TopHeader } from "@/components/layout/TopHeader";
 import { BottomNav } from "@/components/layout/BottomNav";
+import { LevelUpModal } from "@/components/layout/LevelUpModal";
 import { useUserStore } from "@/lib/store/useUserStore";
 import { useStreakStore } from "@/lib/store/useStreakStore";
 import { useJournalStore } from "@/lib/store/useJournalStore";
+import { useQuestStore } from "@/lib/store/useQuestStore";
 import { WEEK_SCHEDULE, WORKOUTS } from "@/lib/data/workouts";
 import { WEEK_NARRATIVES, WORKOUT_FLAVORS } from "@/lib/data/narrative";
 import { getCurrentWeek, getDayKey, formatDate } from "@/lib/utils/dates";
 import { getLevelProgress, getXPToNextLevel } from "@/lib/utils/xp";
-import { DAILY_QUESTS } from "@/lib/data/quests";
+import { DAILY_QUESTS, WEEKLY_QUESTS } from "@/lib/data/quests";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { useEffect } from "react";
+import { Skeleton } from "@/components/ui/Skeleton";
 import {
   ChevronRight,
   Flame,
@@ -20,6 +25,7 @@ import {
   Trophy,
   Target,
   TrendingUp,
+  Check,
 } from "lucide-react";
 
 const container = {
@@ -36,15 +42,55 @@ const item = {
 };
 
 export default function DashboardPage() {
-  const { level, levelName, xp, gems } = useUserStore(
-    useShallow((s) => ({ level: s.level, levelName: s.levelName, xp: s.xp, gems: s.gems }))
+  const { level, levelName, xp, gems, addXP, addGems } = useUserStore(
+    useShallow((s) => ({
+      level: s.level,
+      levelName: s.levelName,
+      xp: s.xp,
+      gems: s.gems,
+      addXP: s.addXP,
+      addGems: s.addGems,
+    }))
   );
   const { currentStreak, longestStreak } = useStreakStore(
     useShallow((s) => ({ currentStreak: s.currentStreak, longestStreak: s.longestStreak }))
   );
   const weeklyCount = useStreakStore((s) => s.getWeeklyCount());
+  
   const today = formatDate();
   const recoveryScore = useJournalStore((s) => s.getRecoveryScore(today));
+  
+  const { isCompleted, completeQuest } = useQuestStore(
+    useShallow((s) => ({
+      isCompleted: s.isCompleted,
+      completeQuest: s.completeQuest,
+    }))
+  );
+
+  const [levelUpData, setLevelUpData] = useState<{ show: boolean; level: number; name: string }>({
+    show: false,
+    level: 0,
+    name: "",
+  });
+
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const handleCompleteQuest = (questId: string, xpReward: number, gemReward?: number) => {
+    if (!isCompleted(questId)) {
+      completeQuest(questId);
+      const leveledUp = addXP(xpReward);
+      if (gemReward) addGems(gemReward);
+
+      if (leveledUp) {
+        const freshLevel = useUserStore.getState().level;
+        const freshName = useUserStore.getState().levelName;
+        setLevelUpData({ show: true, level: freshLevel, name: freshName });
+      }
+    }
+  };
 
   const currentWeek = getCurrentWeek();
   const narrative = WEEK_NARRATIVES.find((n) => n.week === currentWeek);
@@ -62,9 +108,35 @@ export default function DashboardPage() {
       ? "var(--theme-accent-dark)"
       : "var(--theme-red)";
 
+  if (!mounted) {
+    return (
+      <div className="min-h-screen bg-[var(--background)] pb-24">
+        <TopHeader />
+        <div className="px-4 py-4 space-y-4">
+          <Skeleton className="h-[90px] w-full rounded-xl" />
+          <Skeleton className="h-[120px] w-full rounded-xl" />
+          <div className="grid grid-cols-4 gap-2">
+            <Skeleton className="h-[90px] w-full rounded-xl" />
+            <Skeleton className="h-[90px] w-full rounded-xl" />
+            <Skeleton className="h-[90px] w-full rounded-xl" />
+            <Skeleton className="h-[90px] w-full rounded-xl" />
+          </div>
+          <Skeleton className="h-[90px] w-full rounded-xl" />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[var(--background)] pb-24">
       <TopHeader />
+      
+      <LevelUpModal
+        isOpen={levelUpData.show}
+        onClose={() => setLevelUpData({ ...levelUpData, show: false })}
+        newLevel={levelUpData.level}
+        newLevelName={levelUpData.name}
+      />
 
       <motion.div
         className="px-4 py-4 space-y-4"
@@ -78,7 +150,7 @@ export default function DashboardPage() {
             variants={item}
             className="relative overflow-hidden rounded-xl border border-[var(--theme-orange)]/20 card-dark p-4"
           >
-            <div className="absolute top-2 right-3 text-[8px] tracking-[4px] text-[var(--theme-orange)]/60 uppercase">
+            <div className="absolute top-2 right-3 text-[10px] tracking-[4px] text-[var(--theme-orange)]/60 uppercase">
               WEEK {currentWeek}/10
             </div>
             <div className="font-display text-lg text-[var(--theme-orange)] tracking-wider leading-none">
@@ -87,7 +159,6 @@ export default function DashboardPage() {
             <div className="text-[11px] text-[var(--theme-muted)] mt-1.5 leading-relaxed">
               {narrative.text}
             </div>
-            {/* Progress bar for weeks */}
             <div className="mt-3 h-1 bg-[var(--theme-dim)] rounded-full overflow-hidden">
               <motion.div
                 className="h-full bg-[var(--theme-orange)] rounded-full"
@@ -100,7 +171,7 @@ export default function DashboardPage() {
         )}
 
         {/* Today's Workout Card */}
-        {todaySchedule && todayWorkout && (
+        {todaySchedule && todaySchedule.type !== "rest" && todayWorkout && (
           <motion.div variants={item}>
             <Link href={`/workouts/${todaySchedule.type}`}>
               <div
@@ -158,6 +229,27 @@ export default function DashboardPage() {
           </motion.div>
         )}
 
+        {/* Rest Day Card */}
+        {todaySchedule && todaySchedule.type === "rest" && (
+          <motion.div variants={item}>
+            <div className="relative overflow-hidden rounded-xl p-4 border card-dark border-[var(--theme-accent-dark)]/30 bg-gradient-to-br from-[var(--theme-card)] to-[var(--theme-accent-dark)]/10">
+              <div className="flex items-start justify-between">
+                <div>
+                  <div className="text-[9px] tracking-[3px] uppercase font-bold text-[var(--theme-accent-dark)]">
+                    TODAY — {todaySchedule.day}
+                  </div>
+                  <div className="font-display text-2xl tracking-wider text-[var(--foreground)] mt-0.5">
+                    ACTIVE RECOVERY
+                  </div>
+                  <div className="text-[11px] text-[var(--theme-muted)] mt-0.5">
+                    Focus on mobility, sleep, and nutrition. Let the muscles rebuild.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
         {/* Stats Row */}
         <motion.div
           variants={item}
@@ -169,31 +261,36 @@ export default function DashboardPage() {
               value: currentStreak,
               label: "STREAK",
               color: "#FF6B35",
+              href: "/tracking"
             },
             {
               icon: <Target size={16} className="text-[var(--theme-orange)]" />,
               value: `${weeklyCount}/6`,
               label: "THIS WEEK",
               color: "var(--theme-orange)",
+              href: "/tracking"
             },
             {
               icon: <Trophy size={16} className="text-[var(--theme-accent-dark)]" />,
               value: level,
               label: levelName.toUpperCase(),
               color: "var(--theme-accent-dark)",
+              href: "/profile"
             },
             {
               icon: (
-                <TrendingUp size={16} style={{ color: recoveryColor }} />
+                <TrendingUp size={16} style={{ color: recoveryScore === 50 ? "var(--theme-muted)" : recoveryColor }} />
               ),
-              value: recoveryScore,
+              value: recoveryScore === 50 ? "—" : recoveryScore,
               label: "RECOVERY",
-              color: recoveryColor,
+              color: recoveryScore === 50 ? "var(--theme-muted)" : recoveryColor,
+              href: "/journal"
             },
           ].map((stat, i) => (
-            <div
+            <Link
               key={i}
-              className="group flex flex-col items-center p-3 rounded-xl card-dark hover:border-[var(--theme-orange)]/50 hover:card-dark hover:-translate-y-1 transition-all duration-300 cursor-default"
+              href={stat.href}
+              className="group flex flex-col items-center p-3 rounded-xl card-dark hover:border-[var(--theme-orange)]/50 hover:card-dark hover:-translate-y-1 transition-all duration-300 cursor-pointer"
             >
               {stat.icon}
               <span
@@ -202,10 +299,10 @@ export default function DashboardPage() {
               >
                 {stat.value}
               </span>
-              <span className="text-[7px] tracking-wider text-[var(--theme-muted)] mt-0.5 uppercase">
+              <span className="text-[11px] tracking-wider text-[var(--theme-muted)] mt-0.5 uppercase">
                 {stat.label}
               </span>
-            </div>
+            </Link>
           ))}
         </motion.div>
 
@@ -278,7 +375,7 @@ export default function DashboardPage() {
           </div>
         </motion.div>
 
-        {/* Daily Quests Preview */}
+        {/* Daily Quests */}
         <motion.div variants={item}>
           <div className="flex items-center justify-between mb-2">
             <div className="text-[9px] tracking-[3px] text-[var(--theme-muted)] uppercase">
@@ -289,20 +386,108 @@ export default function DashboardPage() {
             </span>
           </div>
           <div className="space-y-1.5">
-            {DAILY_QUESTS.map((quest) => (
-              <div
-                key={quest.id}
-                className="group flex items-center gap-3 p-3 rounded-lg card-dark hover:border-[var(--theme-orange)]/50 hover:card-dark transition-all duration-300 cursor-pointer"
-              >
-                <div className="w-4 h-4 rounded border-2 border-[var(--theme-dim)] group-hover:border-[var(--theme-orange)] flex-shrink-0 transition-colors duration-300" />
-                <span className="text-[11px] text-[var(--foreground)] flex-1">
-                  {quest.title}
-                </span>
-                <span className="text-[9px] text-[var(--theme-orange)] font-bold">
-                  +{quest.xp}
-                </span>
-              </div>
-            ))}
+            {DAILY_QUESTS.map((quest) => {
+              const completed = isCompleted(quest.id);
+              return (
+                <div
+                  key={quest.id}
+                  onClick={() => handleCompleteQuest(quest.id, quest.xp, quest.gems)}
+                  className="group flex items-center gap-3 p-3 rounded-lg card-dark border transition-all duration-300 cursor-pointer"
+                  style={{
+                    borderColor: completed ? "var(--theme-orange)" : "transparent",
+                    opacity: completed ? 0.7 : 1,
+                  }}
+                >
+                  <div
+                    className={`w-4 h-4 rounded border-2 flex items-center justify-center flex-shrink-0 transition-colors duration-300 ${
+                      completed
+                        ? "border-[var(--theme-orange)] bg-[var(--theme-orange)]"
+                        : "border-[var(--theme-dim)] group-hover:border-[var(--theme-orange)]"
+                    }`}
+                  >
+                    {completed && <Check size={10} className="text-black" />}
+                  </div>
+                  <span
+                    className={`text-[11px] flex-1 transition-all ${
+                      completed ? "text-[var(--theme-muted)] line-through" : "text-[var(--foreground)]"
+                    }`}
+                  >
+                    {quest.title}
+                  </span>
+                  {!completed && (
+                    <span className="text-[9px] text-[var(--theme-orange)] font-bold">
+                      +{quest.xp}
+                    </span>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </motion.div>
+
+        {/* Weekly Quests */}
+        <motion.div variants={item}>
+          <div className="flex items-center justify-between mb-2 mt-4">
+            <div className="text-[9px] tracking-[3px] text-[var(--theme-accent-dark)] uppercase">
+              WEEKLY QUESTS
+            </div>
+          </div>
+          <div className="space-y-1.5">
+            {WEEKLY_QUESTS.map((quest) => {
+              const completed = isCompleted(quest.id, `week_${currentWeek}`);
+              return (
+                <div
+                  key={quest.id}
+                  onClick={() => {
+                    if (!completed) {
+                      completeQuest(quest.id, `week_${currentWeek}`);
+                      const leveledUp = addXP(quest.xp);
+                      if (quest.gems) addGems(quest.gems);
+
+                      if (leveledUp) {
+                        const freshLevel = useUserStore.getState().level;
+                        const freshName = useUserStore.getState().levelName;
+                        setLevelUpData({ show: true, level: freshLevel, name: freshName });
+                      }
+                    }
+                  }}
+                  className="group flex items-center gap-3 p-3 rounded-lg card-dark border transition-all duration-300 cursor-pointer"
+                  style={{
+                    borderColor: completed ? "var(--theme-accent-dark)" : "transparent",
+                    opacity: completed ? 0.7 : 1,
+                  }}
+                >
+                  <div
+                    className={`w-4 h-4 rounded border-2 flex items-center justify-center flex-shrink-0 transition-colors duration-300 ${
+                      completed
+                        ? "border-[var(--theme-accent-dark)] bg-[var(--theme-accent-dark)]"
+                        : "border-[var(--theme-dim)] group-hover:border-[var(--theme-accent-dark)]"
+                    }`}
+                  >
+                    {completed && <Check size={10} className="text-black" />}
+                  </div>
+                  <span
+                    className={`text-[11px] flex-1 transition-all ${
+                      completed ? "text-[var(--theme-muted)] line-through" : "text-[var(--foreground)]"
+                    }`}
+                  >
+                    {quest.title}
+                  </span>
+                  {!completed && (
+                    <div className="flex gap-2">
+                      <span className="text-[9px] text-[var(--theme-accent-dark)] font-bold">
+                        +{quest.xp} XP
+                      </span>
+                      {quest.gems && (
+                        <span className="text-[9px] text-emerald-400 font-bold">
+                          +{quest.gems} 💎
+                        </span>
+                      )}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </motion.div>
 
@@ -310,9 +495,9 @@ export default function DashboardPage() {
         {longestStreak > 0 && (
           <motion.div
             variants={item}
-            className="text-center p-3 rounded-xl card-dark border-[var(--theme-border)]"
+            className="text-center p-3 rounded-xl card-dark border-[var(--theme-border)] mt-4"
           >
-            <div className="text-[8px] tracking-[3px] text-[var(--theme-muted)] uppercase">
+            <div className="text-[11px] tracking-[3px] text-[var(--theme-muted)] uppercase">
               LONGEST STREAK RECORD
             </div>
             <div className="font-display text-2xl text-[#FF6B35] mt-0.5">

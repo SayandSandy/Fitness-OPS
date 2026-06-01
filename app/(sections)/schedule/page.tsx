@@ -20,7 +20,7 @@ export default function SchedulePage() {
       <motion.div className="px-4 py-4 space-y-4" variants={container} initial="hidden" animate="show">
         <motion.div variants={item}>
           <h1 className="font-display text-2xl tracking-wider text-[var(--foreground)]">10-WEEK SCHEDULE</h1>
-          <p className="text-[11px] text-[var(--muted-foreground)]">May 31 – August 6 · 6 training days + 1 active rest</p>
+          <p className="text-[11px] text-[var(--muted-foreground)]">10-Week Protocol · 6 training days + 1 active rest</p>
         </motion.div>
 
         {/* Weekly Split */}

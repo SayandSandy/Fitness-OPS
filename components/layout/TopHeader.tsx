@@ -5,6 +5,8 @@ import { useUserStore } from "@/lib/store/useUserStore";
 import { useStreakStore } from "@/lib/store/useStreakStore";
 import { getLevelProgress } from "@/lib/utils/xp";
 import { motion } from "framer-motion";
+import { usePathname, useRouter } from "next/navigation";
+import { ChevronLeft } from "lucide-react";
 
 export function TopHeader() {
   const { level, levelName, xp, gems } = useUserStore(
@@ -14,18 +16,30 @@ export function TopHeader() {
     useShallow((s) => ({ currentStreak: s.currentStreak }))
   );
   const progress = getLevelProgress(xp);
+  const pathname = usePathname();
+  const router = useRouter();
 
   return (
     <header className="sticky top-0 z-50 bg-[#121416]/90 backdrop-blur-md border-b border-[var(--theme-border)]">
       <div className="flex items-center justify-between px-4 py-3">
-        {/* Title */}
-        <div className="flex flex-col">
-          <h1 className="font-display text-xl leading-none tracking-tight text-[var(--foreground)]">
-            FITNESS OPS
-          </h1>
-          <span className="text-[9px] tracking-widest text-[var(--theme-muted)] uppercase mt-0.5">
-            10-WEEK PROTOCOL
-          </span>
+        {/* Title & Back Button */}
+        <div className="flex items-center gap-3">
+          {pathname !== "/" && (
+            <button
+              onClick={() => router.back()}
+              className="p-1 rounded hover:bg-[var(--theme-dim)] transition-colors text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
+            >
+              <ChevronLeft size={20} />
+            </button>
+          )}
+          <div className="flex flex-col">
+            <h1 className="font-display text-xl leading-none tracking-tight text-[var(--foreground)]">
+              FITNESS OPS
+            </h1>
+            <span className="text-[9px] tracking-widest text-[var(--theme-muted)] uppercase mt-0.5">
+              10-WEEK PROTOCOL
+            </span>
+          </div>
         </div>
 
         {/* Stats */}
@@ -57,14 +71,14 @@ export function TopHeader() {
           <div className="flex items-center gap-2">
             <div className="flex flex-col items-end">
               <div className="flex items-center gap-1.5">
-                <span className="text-[8px] tracking-widest text-[var(--theme-muted)] uppercase">
+                <span className="text-[9px] tracking-widest text-[var(--theme-muted)] uppercase">
                   LVL
                 </span>
                 <span className="font-display text-base leading-none text-[var(--theme-orange)]">
                   {level}
                 </span>
               </div>
-              <span className="text-[7px] tracking-wider text-[var(--theme-muted)] uppercase">
+              <span className="text-[9px] tracking-wider text-[var(--theme-muted)] uppercase">
                 {levelName}
               </span>
             </div>
@@ -96,7 +110,7 @@ export function TopHeader() {
                   transition={{ duration: 0.8, ease: "easeOut" }}
                 />
               </svg>
-              <span className="absolute inset-0 flex items-center justify-center text-[7px] font-bold text-[var(--theme-orange)]">
+              <span className="absolute inset-0 flex items-center justify-center text-[8px] font-bold text-[var(--theme-orange)]">
                 XP
               </span>
             </div>

@@ -34,7 +34,7 @@
   --secondary: #1A1D21;
   --secondary-foreground: #F0F1F3;
   --muted: #1A1D21;
-  --muted-foreground: #696E76;
+  --muted-foreground: #9FA3A9;
   --accent: #FFA05C;
   --accent-foreground: #0E1216;
   --destructive: #FF4D6D;
@@ -70,7 +70,7 @@
   --theme-card: #17191C;
   --theme-card-elevated: #1A1D21;
   --theme-border: #2A2D32;
-  --theme-muted: #696E76;
+  --theme-muted: #9FA3A9;
 
 }
 

@@ -11,10 +11,21 @@ import { auth } from "@/lib/firebase";
 import { Trophy, Flame, Zap, Dumbbell, Calendar, LogOut, Phone, Mail } from "lucide-react";
 import { motion } from "framer-motion";
 import { signOut } from "firebase/auth";
+import { THEMES, useSettingsStore } from "@/lib/store/useSettingsStore";
 
 export default function ProfilePage() {
-  const { level, levelName, xp, gems } = useUserStore(
-    useShallow((s) => ({ level: s.level, levelName: s.levelName, xp: s.xp, gems: s.gems }))
+  const { level, levelName, xp, gems, theme, unlockedThemes, spendGems, unlockTheme, setTheme } = useUserStore(
+    useShallow((s) => ({
+      level: s.level,
+      levelName: s.levelName,
+      xp: s.xp,
+      gems: s.gems,
+      theme: s.theme,
+      unlockedThemes: s.unlockedThemes,
+      spendGems: s.spendGems,
+      unlockTheme: s.unlockTheme,
+      setTheme: s.setTheme
+    }))
   );
   const { longestStreak } = useStreakStore(
     useShallow((s) => ({ longestStreak: s.longestStreak }))
@@ -22,6 +33,7 @@ export default function ProfilePage() {
   const { completedSessions } = useWorkoutStore(
     useShallow((s) => ({ completedSessions: s.completedSessions }))
   );
+  const { applyTheme } = useSettingsStore(useShallow((s) => ({ applyTheme: s.applyTheme })));
   const user = auth.currentUser;
 
   const progress = getLevelProgress(xp);
@@ -180,6 +192,62 @@ export default function ProfilePage() {
                 <p className="text-[10px] mt-2">Complete a workout to see it here.</p>
               </div>
             )}
+          </div>
+        </motion.div>
+
+        {/* Theme Armory */}
+        <motion.div variants={item}>
+          <div className="flex items-center justify-between mb-3 px-1">
+            <div className="text-[10px] tracking-[3px] text-[var(--muted-foreground)] uppercase">
+              THEME ARMORY
+            </div>
+            <div className="text-[10px] text-emerald-400 font-bold">
+              {gems} 💎
+            </div>
+          </div>
+          <div className="grid gap-3">
+            {THEMES.map((t) => {
+              const isUnlocked = unlockedThemes.includes(t.id);
+              const isActive = theme === t.id;
+              
+              return (
+                <div key={t.id} className={`p-4 rounded-xl card-dark border transition-all ${isActive ? 'border-[var(--theme-orange)]' : 'border-[var(--theme-border)]'}`}>
+                  <div className="flex justify-between items-center mb-3">
+                    <div className="font-display text-lg" style={{ color: t.accent }}>{t.name}</div>
+                    <div className="flex gap-2">
+                      <div className="w-4 h-4 rounded-full border border-[var(--theme-border)]" style={{ backgroundColor: t.bg }} />
+                      <div className="w-4 h-4 rounded-full border border-[var(--theme-border)]" style={{ backgroundColor: t.card }} />
+                      <div className="w-4 h-4 rounded-full border border-[var(--theme-border)]" style={{ backgroundColor: t.accent }} />
+                    </div>
+                  </div>
+                  {isActive ? (
+                    <div className="text-[10px] font-bold tracking-wider text-[var(--theme-orange)] uppercase text-center w-full py-2 bg-[var(--theme-orange)]/10 rounded-lg">ACTIVE</div>
+                  ) : isUnlocked ? (
+                    <button
+                      onClick={() => {
+                        setTheme(t.id);
+                        applyTheme(t.id);
+                      }}
+                      className="w-full py-2 rounded-lg text-[10px] font-bold tracking-wider uppercase border border-[var(--theme-border)] hover:border-[var(--theme-orange)] hover:text-[var(--theme-orange)] transition-colors"
+                    >
+                      ACTIVATE
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => {
+                        if (spendGems(t.cost)) {
+                          unlockTheme(t.id);
+                        }
+                      }}
+                      disabled={gems < t.cost}
+                      className="w-full py-2 rounded-lg text-[10px] font-bold tracking-wider uppercase border border-[var(--theme-border)] hover:border-emerald-400 hover:text-emerald-400 transition-colors disabled:opacity-50 flex items-center justify-center gap-1"
+                    >
+                      UNLOCK — {t.cost} 💎
+                    </button>
+                  )}
+                </div>
+              )
+            })}
           </div>
         </motion.div>
 
